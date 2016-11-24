@@ -9,7 +9,8 @@ import types from './types';
 const initialState = {
   isLoading: false,
   didInvalidate: true,
-  items: []
+  items: [],
+  currentProject: { id: 0, name: '', isLoading: true }
 };
 
 export default (state = initialState, action) => {
@@ -57,7 +58,8 @@ export default (state = initialState, action) => {
       return {
         ...state,
         items,
-        isLoading: false
+        isLoading: false,
+        currentProject: state.currentProject && state.currentProject.id === action.project.id ? action.project : state.currentProject
       };
     case types.NEW_PROJECT_REQUEST:
       return {
@@ -72,6 +74,27 @@ export default (state = initialState, action) => {
           action.project,
           ...state.items
         ]
+      };
+    case types.REMOVE_PROJECT:
+      const itemsWithoutRemoved = state.items.filter((x) => x.id !== action.id);
+
+      return {
+        ...state,
+        items: itemsWithoutRemoved
+      };
+    case types.SWITCH_PROJECT_REQUEST:
+      return {
+        ...state,
+        currentProject: initialState.currentProject
+      };
+    case types.SWITCH_PROJECT:
+      return {
+        ...state,
+        currentProject: action.project
+      };
+    case types.SWITCH_PROJECT_ERROR:
+      return {
+        ...state
       };
     default:
       return state;

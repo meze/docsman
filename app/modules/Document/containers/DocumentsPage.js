@@ -1,12 +1,18 @@
 import React, { Component, PropTypes as T } from 'react';
+import { formatPattern } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Grid } from 'semantic-ui-react';
+import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import DocumentList from '../components/DocumentList';
-import * as actions from '../actions/handlers';
+import * as documentActions from '../actions/handlers';
+import * as projectActions from '../../Project/actions/handlers';
+import projectUri from '../../Project/uri';
+import documentUri from '../uri';
 
 class DocumentsPage extends Component {
   static propTypes = {
-    actions: T.object.isRequired,
+    documentActions: T.object.isRequired,
     isLoading: T.bool.isRequired,
     items: T.array.isRequired,
     lastId: T.number,
@@ -14,6 +20,7 @@ class DocumentsPage extends Component {
       name: T.string.isRequired,
       id: T.number.isRequired
     }),
+    projectActions: T.object.isRequired,
     selectedProject: T.string
   }
 
@@ -22,37 +29,49 @@ class DocumentsPage extends Component {
   }
 
   componentDidMount() {
-    this.props.actions.fetchIfNeeded(this.props.selectedProject);
+    this.props.documentActions.fetchIfNeeded(this.props.selectedProject);
+    this.props.projectActions.switchTo(this.props.selectedProject);
   }
 
   componentWillReceiveProps(props) {
     if (props.selectedProject !== this.props.selectedProject) {
-      this.props.actions.invalidate();
-      this.props.actions.fetchIfNeeded(props.selectedProject);
+      this.props.documentActions.invalidate();
+      this.props.documentActions.fetchIfNeeded(props.selectedProject);
+      this.props.projectActions.switchTo(props.selectedProject);
     }
   }
 
   handleAddDocumentClick = (e) => {
     e.preventDefault();
-    this.context.router.push('/projects/' + this.props.selectedProject + '/createDocument');
+    this.context.router.push(formatPattern(documentUri.create, { project: this.props.selectedProject }));
   }
 
   handleSettingsClick = () => {
-    this.context.router.push('/projects/' + this.props.selectedProject + '/settings');
+    this.context.router.push(formatPattern(projectUri.settings, { project: this.props.selectedProject }));
   }
 
   render() {
     const { items, isLoading, project, lastId } = this.props;
+    const sections = [
+      { content: project.name, active: true, key: 1 }
+    ];
 
     return (
-      <DocumentList
-        items={items}
-        isLoading={isLoading}
-        handleAddDocumentClick={this.handleAddDocumentClick}
-        handleSettingsClick={this.handleSettingsClick}
-        project={project}
-        lastId={lastId}
-      />
+      <section className="body">
+        <PageBreadcrumb sections={sections} isLoading={!!project.isLoading} />
+        <Grid>
+          <Grid.Column width={16}>
+            <DocumentList
+              items={items}
+              isLoading={isLoading}
+              handleAddDocumentClick={this.handleAddDocumentClick}
+              handleSettingsClick={this.handleSettingsClick}
+              project={project}
+              lastId={lastId}
+            />
+          </Grid.Column>
+        </Grid>
+      </section>
     );
   }
 }
@@ -62,20 +81,15 @@ const mapStateToProps = (state, ownProps) => {
   const {
     isLoading,
     items,
-    projectId,
     lastItemId
   } = documents || {
     isLoading: true,
     items: [],
-    projectId: 0,
     lastItemId: 0
   };
 
   return {
-    project: projects.items.filter((project) => parseInt(project.id, 10) === parseInt(projectId, 10))[0] || {
-      name: '',
-      id: 0
-    },
+    project: projects.currentProject,
     items,
     isLoading,
     selectedProject: ownProps.routeParams.project,
@@ -85,7 +99,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProp = (dispatch) => {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    documentActions: bindActionCreators(documentActions, dispatch),
+    projectActions: bindActionCreators(projectActions, dispatch)
   };
 };
 

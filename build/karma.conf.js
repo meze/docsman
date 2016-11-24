@@ -16,7 +16,7 @@ const karmaConfig = {
   ],
   singleRun: !argv.watch,
   frameworks: ['mocha'],
-  reporters: ['mocha'],
+  reporters: ['dots'],
   preprocessors: {
     [`${config.dir_test}/test-bundler.js`]: ['webpack']
   },
@@ -24,21 +24,11 @@ const karmaConfig = {
   webpack: {
     devtool: 'cheap-module-source-map',
     resolve: Object.assign({}, webpackConfig.resolve, {
-      alias: Object.assign({}, (webpackConfig.resolve ? webpackConfig.resolve.alias : {}), {
-        sinon: 'sinon/pkg/sinon.js'
-      })
+      alias: Object.assign({}, (webpackConfig.resolve ? webpackConfig.resolve.alias : {}))
     }),
     plugins: webpackConfig.plugins,
     module: {
-      noParse: [
-        /\/sinon\.js/
-      ],
-      rules: webpackConfig.module.rules.concat([
-        {
-          test: /sinon(\\|\/)pkg(\\|\/)sinon\.js/,
-          loader: 'imports?define=>false,require=>false'
-        }
-      ])
+      rules: webpackConfig.module.rules
     },
     // Enzyme fix, see:
     // https://github.com/airbnb/enzyme/issues/47

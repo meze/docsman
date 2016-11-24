@@ -1,6 +1,6 @@
 import expect from 'expect';
 import React from 'react';
-import ProjectSettings from 'modules/Project/components/ProjectSettings';
+import ProjectSettingsForm from 'modules/Project/components/ProjectSettingsForm';
 import { mount } from 'enzyme';
 
 function setup(isLoading = false) {
@@ -10,10 +10,10 @@ function setup(isLoading = false) {
     onBackClick: () => {}
   };
 
-  return mount(<ProjectSettings {...props} />);
+  return mount(<ProjectSettingsForm {...props} />);
 }
 
-describe('(Modules - Project) Components/ProjectSettings', () => {
+describe('(Modules - Project) Components/ProjectSettingsForm', () => {
   it('shows loader', () => {
     const segment = setup(true).find('Segment');
 

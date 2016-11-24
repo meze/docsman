@@ -3,7 +3,7 @@ import { Button, Header, Segment, Form, Divider, Label } from 'semantic-ui-react
 import { form } from 'react-inform';
 import { notEmpty } from '../../../validation/rules';
 
-const ProjectSettings = ({ onSave, onBackClick, fields, isLoading, name, ...props }) => {
+const DocumentSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...props }) => {
   function handleBackClick(e) {
     e.preventDefault();
     onBackClick();
@@ -18,14 +18,14 @@ const ProjectSettings = ({ onSave, onBackClick, fields, isLoading, name, ...prop
 
   return (
     <Segment loading={isLoading}>
-      <Header floated="left">Settings of {name}</Header>
-      <Button icon="list" floated="right" compact={true} color="grey" size="tiny" onClick={handleBackClick} />
+      <Header floated="left">Basic Settings</Header>
+      <Button icon="long arrow left" floated="right" compact={true} color="grey" size="tiny" onClick={handleBackClick} />
       <Divider clearing={true} />
       <Form onSubmit={handleSubmit}>
         <Form.Field width={8} error={!!fields.name.error}>
           <label htmlFor="name">Name</label>
           <input name="name" label="Name" placeholder="Name" {...fields.name.props} />
-          {fields.name.error && <Label basic={true} color="red" pointing={true}>{fields.name.error}</Label>}
+          {fields.name.error && <Label basic={true} color="red" pointing={true} onRemove={null} content={fields.name.error} />}
         </Form.Field>
         <Button type="submit" size="small" disabled={!props.form.isValid()}>Rename</Button>
       </Form>
@@ -33,7 +33,7 @@ const ProjectSettings = ({ onSave, onBackClick, fields, isLoading, name, ...prop
   );
 };
 
-ProjectSettings.propTypes = {
+DocumentSettingsForm.propTypes = {
   fields: T.object.isRequired,
   form: T.object.isRequired,
   isLoading: T.bool,
@@ -45,10 +45,10 @@ ProjectSettings.propTypes = {
 };
 
 const validate = ({ name }) => ({
-  ...notEmpty('name', name, 'A project needs a name')
+  ...notEmpty('name', name, 'A document needs a name')
 });
 
 export default form({
   fields: ['name'],
   validate
-})(ProjectSettings);
+})(DocumentSettingsForm);

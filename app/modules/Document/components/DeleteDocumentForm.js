@@ -1,7 +1,7 @@
 import React, { Component, PropTypes as T } from 'react';
 import { Button, Header, Segment, Form, Message } from 'semantic-ui-react';
 
-export default class DeleteProjectForm extends Component {
+export default class DeleteDocumentForm extends Component {
   static propTypes = {
     isLoading: T.bool,
     onRemove: T.func.isRequired
@@ -28,11 +28,11 @@ export default class DeleteProjectForm extends Component {
     return (
       <Segment loading={isLoading}>
         <Message negative={true}>
-          <Header content="Move this project to trash" dividing={true} />
+          <Header content="Move this document to trash" dividing={true} />
           <br />
           <Form className="fluid" onSubmit={this.handleRemove}>
-            <Form.Checkbox name="confirmed" onChange={this.toggleButton} inline={true} label="Yes, I want to move this project and all its documents to trash" />
-            <Button color="red" size="small" type="submit" disabled={this.state.disableButton}>Trash</Button>
+            <Form.Checkbox onChange={this.toggleButton} inline={true} label="Yes, I want to move this document to trash" />
+            <Button color="red" size="small" disabled={this.state.disableButton}>Trash</Button>
           </Form>
         </Message>
       </Segment>

@@ -14,5 +14,7 @@ export function notice(message) {
 
 export function handleError(message, err) {
   error('A network error occurred.');
-  console.warn(message, err); // eslint-disable-line no-console
+  if (__DEV__) {
+    console.warn(message, err); // eslint-disable-line no-console
+  }
 }

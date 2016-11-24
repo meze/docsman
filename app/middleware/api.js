@@ -6,8 +6,16 @@ function catchError(on) {
   return (err) => {
     handleError('Error on ' + on, err);
 
-    return Promise.reject('API error');
+    throw err;
   };
+}
+
+function handleResponse(response) {
+  if (response.ok) {
+    return response.json();
+  }
+
+  throw new Error('Response status is not ok: ' + response.status);
 }
 
 function fetchJson(url, options = {}) {
@@ -19,13 +27,17 @@ function fetchJson(url, options = {}) {
   }
 
   return fetch(`${API_ENDPOINT}/${url}`, options)
-    .catch(catchError('Getting a response'))
-    .then((response) => response.json())
-    .catch(catchError('JSON parsing'));
+    .catch(catchError('getting a response'))
+    .then(handleResponse)
+    .catch(catchError('decoding response'));
 }
 
 function getProjects() {
   return fetchJson('projects');
+}
+
+function getProject(projectId) {
+  return fetchJson(`projects/${projectId}`);
 }
 
 function getDocuments(projectId) {
@@ -52,19 +64,29 @@ function saveProject(project) {
     });
 }
 
-function updateProject(projectId, project) {
+function updateProject(id, project) {
   return fetchJson(
-    `projects/${projectId}`, {
+    `projects/${id}`, {
       method: 'PUT',
       body: JSON.stringify(project)
+    });
+}
+
+function removeProject(id) {
+  return fetchJson(
+    `projects/${id}`, {
+      method: 'DELETE',
+      body: id
     });
 }
 
 export default {
   projects: {
     get: getProjects,
+    getOne: getProject,
     save: saveProject,
-    update: updateProject
+    update: updateProject,
+    remove: removeProject
   },
   documents: {
     get: getDocuments,

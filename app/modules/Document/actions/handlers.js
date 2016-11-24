@@ -106,11 +106,11 @@ export const receiveUpdated = (document) => {
   };
 };
 
-export const update = (documentId, updatedDocument) => (dispatch) => {
+export const update = (updatedDocument) => (dispatch) => {
   dispatch({
     type: types.REQUEST_UPDATE_DOCUMENT
   });
 
-  return api.documents.save(updatedDocument.projectId, updatedDocument, documentId)
+  return api.documents.save(updatedDocument.projectId, updatedDocument, updatedDocument.id)
     .then((data) => dispatch(receiveUpdated(data)));
 };

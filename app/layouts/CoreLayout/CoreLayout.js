@@ -1,42 +1,55 @@
 import React, { PropTypes as T } from 'react';
-import { Container, Grid, Menu, Label } from 'semantic-ui-react';
+import { Container, Grid, Menu, Divider } from 'semantic-ui-react';
+import { formatPattern } from 'react-router';
 import ProjectsNavContainer from '../../containers/ProjectsNavContainer';
+import projectUri from '../../modules/Project/uri';
 
-const CoreLayout = ({ children, routeParams }) => (
-  <div>
-    <Grid padded={true}>
-      <Grid.Row>
-        <Grid.Column width={16} className="top-nav">
-          <Menu size="small" inverted={true}>
-            <Menu.Item>
-              <h4 className="logo">Docsman<span className="subtext">ager</span></h4>
-            </Menu.Item>
-            <Menu.Item name="home" active={true}>
-              Home
-            </Menu.Item>
-            <Menu.Item name="testimonials" active={'' === 'testimonials'}>
-              Trash
-              {' '}
-              <Label color="grey" size="mini">1</Label>
-            </Menu.Item>
-          </Menu>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
-    <Container className="main">
-      <Grid columns="equal">
+const CoreLayout = ({ children, routeParams }, context) => {
+  const onAddProjectClick = (e) => {
+    e.preventDefault();
+    context.router.push(formatPattern(projectUri.create));
+  };
+
+  const onProjectsClick = (e) => {
+    e.preventDefault();
+    context.router.push(formatPattern('/'));
+  };
+
+  return (
+    <div>
+      <Grid padded={true}>
         <Grid.Row>
-          <Grid.Column width={5}>
-            <ProjectsNavContainer selectedProject={parseInt(routeParams.project, 10)} />
-          </Grid.Column>
-          <Grid.Column width={11}>
-            {children}
+          <Grid.Column width={16} className="top-nav">
+            <Container>
+              <Menu size="small" inverted={true} pointing={true} className="head" borderless={true}>
+                <Menu.Item>
+                  <h4 className="logo">Docsman<span className="subtext">ager</span></h4>
+                </Menu.Item>
+                <Menu.Item name="home" active={context.router.location.pathname.startsWith('/projects')} onClick={onProjectsClick}>
+                  Projects
+                </Menu.Item>
+                <Menu.Item name="testimonials" active={'' === 'testimonials'}>
+                  Trash
+                  {' '}
+                </Menu.Item>
+                <Menu.Item name="testimonials" active={context.router.isActive(projectUri.create)} className="add-project" onClick={onAddProjectClick}>
+                  Add Project
+                  {' '}
+                </Menu.Item>
+              </Menu>
+            </Container>
           </Grid.Column>
         </Grid.Row>
       </Grid>
-    </Container>
-  </div>
-);
+
+      <Container className="main">
+        <ProjectsNavContainer selectedProject={parseInt(routeParams.project, 10)} />
+        <Divider />
+        {children}
+      </Container>
+    </div>
+  );
+};
 
 CoreLayout.contextTypes = {
   router: T.object.isRequired

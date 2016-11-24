@@ -1,74 +1,93 @@
 import React, { Component, PropTypes as T } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Link } from 'react-router';
-import { Header, Segment, Breadcrumb, Button, Divider } from 'semantic-ui-react';
+import { Link, formatPattern } from 'react-router';
+import { Header, Segment, Button, Divider, Grid } from 'semantic-ui-react';
+import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import ContentEditor from '../../../components/ContentEditor';
-import * as actions from '../actions/handlers';
+import * as documentActions from '../actions/handlers';
+import * as projectActions from '../../Project/actions/handlers';
+import documentUri from '../uri';
 
 class DocumentPage extends Component {
   static propTypes = {
-    actions: T.object.isRequired,
     document: T.shape({
       name: T.string.isRequired,
       content: T.string,
       id: T.number.isRequired
     }),
+    documentActions: T.object.isRequired,
     documentId: T.number.isRequired,
     isLoading: T.bool.isRequired,
     project: T.shape({
       id: T.number.isRequired,
       name: T.string.isRequired
-    })
+    }),
+    projectActions: T.object.isRequired,
+    projectId: T.number.isRequired
+  }
+
+  static contextTypes = {
+    router: T.object.isRequired
   }
 
   componentDidMount() {
-    if (this.props.project.id > 0) {
-      this.props.actions.fetchOne(this.props.project.id, this.props.documentId);
+    if (this.props.projectId > 0 && this.props.documentId > 0) {
+      this.props.documentActions.fetchOne(this.props.projectId, this.props.documentId);
+      this.props.projectActions.switchTo(this.props.projectId);
     }
   }
 
   componentWillReceiveProps(props) {
-    if (props.project.id !== this.props.project.id || props.documentId !== this.props.documentId) {
-      this.props.actions.fetchOne(props.project.id, props.documentId);
+    if (props.projectId !== this.props.projectId || props.documentId !== this.props.documentId) {
+      this.props.documentActions.fetchOne(props.projectId, props.documentId);
+      this.props.projectActions.switchTo(props.projectId);
     }
   }
 
   save = (content) => {
-    this.props.actions.update(this.props.documentId, {
+    this.props.documentActions.update(this.props.documentId, {
       id: this.props.documentId,
-      projectId: this.props.project.id,
+      projectId: this.props.projectId,
       content,
       name: this.props.document.name
     });
   }
 
+  handleSettingsClick = () => {
+    this.context.router.push(formatPattern(documentUri.settings, { project: this.props.projectId, document: this.props.documentId }));
+  }
+
   render() {
     const { project, document, isLoading } = this.props;
 
+    const sections = [
+      { content: <Link to={formatPattern(documentUri.documents, { project: project.id })}>{project.name}</Link>, key: 1 },
+      { content: document.name, active: true, key: 2 }
+    ];
+
     return (
-      <section>
-        <Segment loading={isLoading}>
-          <Header floated="left">
-            <Breadcrumb>
-              <Breadcrumb.Section><Link to={`/projects/${project.id}/documents`}>{project.name}</Link></Breadcrumb.Section>
-              <Breadcrumb.Divider icon="right angle" />
-              <Breadcrumb.Section active={true}>
+      <section className="body">
+        <PageBreadcrumb sections={sections} isLoading={!!(project.isLoading || document.isLoading)} />
+        <Grid>
+          <Grid.Column width={16}>
+            <Segment loading={isLoading}>
+              <Header floated="left">
                 {document.name}
-                {' '}
-              </Breadcrumb.Section>
-            </Breadcrumb>
-          </Header>
-          <Button
-            icon="pencil"
-            floated="right"
-            compact={true}
-            color="grey"
-            size="small"
-          />
-          <Divider clearing={true} />
-          <ContentEditor text={document.content} onSave={this.save} />
-        </Segment>
+              </Header>
+              <Button
+                icon="pencil"
+                onClick={this.handleSettingsClick}
+                floated="right"
+                compact={true}
+                color="grey"
+                size="small"
+              />
+              <Divider clearing={true} />
+              <ContentEditor text={document.content} onSave={this.save} />
+            </Segment>
+          </Grid.Column>
+        </Grid>
       </section>
     );
   }
@@ -81,16 +100,15 @@ const mapStateToProps = (state, ownProps) => {
     isLoading: documents.isLoading,
     document: documents.selectedDocument,
     documentId: parseInt(ownProps.routeParams.document, 10),
-    project: projects.items.filter((project) => project.id === parseInt(ownProps.routeParams.project, 10))[0] || {
-      name: '',
-      id: 0
-    }
+    projectId: parseInt(ownProps.routeParams.project, 10),
+    project: projects.currentProject
   };
 };
 
 const mapDispatchToProp = (dispatch) => {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    documentActions: bindActionCreators(documentActions, dispatch),
+    projectActions: bindActionCreators(projectActions, dispatch)
   };
 };
 

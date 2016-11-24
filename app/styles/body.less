@@ -3,11 +3,45 @@ body {
 }
 
 .ui.grid > .row > .column.top-nav {
-  background: #000000;
   padding-top: 0;
   padding-bottom: 0;
   margin-top: -1rem;
   margin-bottom: -1rem;
+}
+
+.ui.inverted.menu, .ui.grid > .row > .column.top-nav {
+  background: #556270;
+}
+
+.ui.inverted.pointing.menu .active.item:after, .ui.inverted.pointing.menu .active.item:hover:after {
+  background: #6e7985 !important;
+}
+
+.ui.inverted.pointing.menu .item:hover {
+  background: #77889a;
+
+  &:after {
+    background: #77889a !important;
+  }
+}
+.ui.inverted.pointing.menu .active.item:hover:after {
+  background: #77889a !important;
+}
+
+.ui.secondary.menu {
+  .active.item {
+    background: #EDEB89;
+    font-weight: bold;
+    color: #644400;
+
+    &:hover {
+      background: #EFECA7;
+    }
+  }
+
+  a.item:hover {
+    background: #EFECA7;
+  }
 }
 
 /*
@@ -16,7 +50,7 @@ body {
 }*/
 
 .main {
-  margin-top: 30px;
+  padding-top: 1rem;
 }
 
 #notie-alert-outer, #notie-confirm-outer, #notie-force-outer, #notie-input-outer, #notie-select-outer, #notie-date-outer {
@@ -25,6 +59,7 @@ body {
   right: 50%;
   margin-left: -150px;
   font-size: 0.92857143em;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 }
 
 #notie-alert-inner {
@@ -32,10 +67,10 @@ body {
 }
 
 .logo {
-  color: #449966;
+  color: #C7F464;
 
   > .subtext {
-    color: #ccff77;
+    color: #4ECDC4;
     font-size: 0.9em;
   }
 }
@@ -78,4 +113,78 @@ Hex	RGB
 
 .ce-element--focused {
   background-color: rgba(243, 215, 18, 0.04);
+}
+
+/*
+.row {
+  border: 1px solid red !important;
+}
+.column {
+  border: 1px solid #ccff77 !important;
+}*/
+
+.ui.secondary.menu .item {
+  background: #E1E5B7;
+}
+
+.ui.secondary.menu {
+  margin-left: 1rem;
+}
+
+section.body {
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  > div .ui.breadcrumb {
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+  }
+}
+
+.head.ui.inverted.menu .item.add-project {
+  background-color: #3B8686;
+
+  &:hover {
+    background-color: #79BD9A;
+  }
+
+  &.active:after {
+    background-color: #3B8686 !important;
+  }
+
+  &.active:hover:after {
+    background-color: #79BD9A !important;
+  }
+}
+
+.ui.inline.loader.active.breadcrumb-loader {
+  left: 0.5rem;
+  top: -0.5rem;
+}
+
+.ui.breadcrumb .section:last-child {
+  -webkit-animation-name: opacity;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: 1;
+  animation-name: opacity;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+}
+
+@-webkit-keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

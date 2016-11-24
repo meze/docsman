@@ -1,14 +1,17 @@
 import expect from 'expect';
-import React, { PropTypes } from 'react';
-import { mount } from 'enzyme';
+import React from 'react';
+import { shallow } from 'enzyme';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
-import AddProjectPage from 'modules/Project/containers/AddProjectPage';
+import { PureAddProjectPage } from 'modules/Project/containers/AddProjectPage';
+import AddProjectForm from 'modules/Project/components/AddProjectForm';
+
+import routerMock from '../../../routerMock';
 
 const middleware = [thunk];
 const mockStore = configureMockStore(middleware);
-function setup(isLoading = false) {
+
+function createWrapper(data) {
   const store = mockStore({
     projects: {
       items: [],
@@ -16,33 +19,64 @@ function setup(isLoading = false) {
     }
   });
   const props = {
-    isLoading,
+    isLoading: false,
     onSave: () => {},
-    onBackClick: () => {}
-  };
-  //  <Provider store={store}>
- //     <AddProjectPage {...props} />
- //   </Provider>,
+    onBackClick: () => {},
+    actions: {
+      save: (...args) => {
+        data.saveArgs = args;
 
-  return mount(
-    <AddProjectPage {...props} />,
+        return Promise.resolve({ project: { id: 1 } });
+      }
+    }
+  };
+
+  return shallow(
+    <PureAddProjectPage {...props} />,
     {
       context: {
         store: store,
-        router: {}
-      },
-      childContextTypes: {
-        router: PropTypes.object
+        router: data.router
       }
     }
   );
 }
 
 describe('(Modules - Project) containers/AddProjectPage', () => {
-  it('shows loader', () => {
-    const segment = setup(true);
-    console.log('state',  segment.props());
+  let _data;
 
-    //expect(segment.props().loading).toBe(true);
+  beforeEach(() => {
+    _data = {
+      router: routerMock(),
+      saveArgs: []
+    };
+  });
+
+  it('updates state', () => {
+    const wrapper = createWrapper(_data);
+    wrapper.instance().handleChange({ name: 'test' });
+
+    expect(wrapper.instance().state.name).toBe('test');
+  });
+
+  it('contains form', () => {
+    const wrapper = createWrapper(_data);
+    const form = wrapper.find(AddProjectForm);
+
+    expect(form.length).toBe(1);
+  });
+
+  it('saves state', (done) => {
+    const wrapper = createWrapper(_data);
+    wrapper.instance().handleChange({ name: 'test' });
+
+    wrapper.instance().onSave().then((...data) => {
+      expect(_data.router.lastUrl()).toBe('/projects/1/documents');
+      expect(_data.saveArgs[0]).toEqual({ name: 'test' });
+
+      done();
+    }).catch((err) => {
+      done(err);
+    });
   });
 });

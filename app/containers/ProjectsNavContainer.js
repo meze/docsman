@@ -1,8 +1,9 @@
 import React, { Component, PropTypes as T } from 'react';
 import { connect } from 'react-redux';
-import { Divider, Header, Button, Segment } from 'semantic-ui-react';
+import { formatPattern } from 'react-router';
 import ProjectsNav from '../components/ProjectsNav';
 import * as ProjectActions from '../modules/Project/actions/handlers';
+import documentUri from '../modules/Document/uri';
 
 class ProjectsNavContainer extends Component {
   static contextTypes = {
@@ -22,28 +23,19 @@ class ProjectsNavContainer extends Component {
 
   handleItemClick = (e, { name }) => {
     e.preventDefault();
-    this.context.router.push('/projects/' + name + '/documents');
-  }
-
-  handleAddProjectClick = (e) => {
-    e.preventDefault();
-    this.context.router.push('/createProject');
+    this.context.router.push(formatPattern(documentUri.documents, { project: name }));
   }
 
   render() {
     const { items, isLoading, selectedProject } = this.props;
 
     return (
-      <Segment className="projects" loading={isLoading}>
-        <Header floated="left">Projects</Header>
-        <Button floated="right" size="tiny" color="green" onClick={this.handleAddProjectClick}>Add Project</Button>
-        <Divider clearing={true} hidden={true} />
-        <ProjectsNav
-          items={items}
-          handleItemClick={this.handleItemClick}
-          activeItem={selectedProject}
-        />
-      </Segment>
+      <ProjectsNav
+        isLoading={isLoading}
+        items={items}
+        handleItemClick={this.handleItemClick}
+        activeItem={selectedProject}
+      />
     );
   }
 }

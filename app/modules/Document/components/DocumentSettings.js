@@ -6,10 +6,14 @@ export default class DocumentSettings extends Component {
     document: T.shape({
       name: T.string.isRequired,
       id: T.number.isRequired
-    }),
+    }).isRequired,
     handleBackClick: T.func,
     handleSubmit: T.func,
     isLoading: T.bool,
+    /*project: T.shape({
+      name: T.string.isRequired,
+      id: T.number.isRequired
+    }).isRequired,*/
     route: T.object,
     routeParams: T.object
   }
@@ -54,10 +58,12 @@ export default class DocumentSettings extends Component {
   }
 
   render() {
+    const { isLoading } = this.props;
+
     return (
       <section>
-        <Segment loading={this.props.isLoading}>
-          <Header floated="left">Settings of {this.props.document.name}</Header>
+        <Segment loading={isLoading}>
+          <Header floated="left">Basic Settings</Header>
           <Button icon="list" floated="right" compact={true} color="grey" size="tiny" onClick={this.handleBackClick} />
           <Divider clearing={true} />
           <Form onSubmit={this.handleSubmit}>
@@ -68,7 +74,7 @@ export default class DocumentSettings extends Component {
             <Button type="submit" size="small">Rename</Button>
           </Form>
         </Segment>
-        <Segment loading={this.props.isLoading}>
+        <Segment loading={isLoading}>
           <Message negative={true}>
             <Header content="Move this document to trash" dividing={true} />
             <br />

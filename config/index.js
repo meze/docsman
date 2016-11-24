@@ -47,7 +47,6 @@ const config = {
     'react-redux',
     'react-router',
     'redux',
-    'keymirror',
     'moment',
     'notie',
     'react-dom',

@@ -16,7 +16,8 @@ const initialState = {
     id: 0,
     projectId: 0,
     name: '',
-    content: ''
+    content: '',
+    isLoading: true
   }
 };
 
