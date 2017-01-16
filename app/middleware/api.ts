@@ -1,8 +1,8 @@
+import 'whatwg-fetch';
 import { API_ENDPOINT } from '../config/api';
 import { handleError } from '../utils/notification';
-import 'whatwg-fetch';
 
-function catchError(on) {
+function catchError(on: string) {
   return (err) => {
     handleError('Error on ' + on, err);
 
@@ -10,7 +10,7 @@ function catchError(on) {
   };
 }
 
-function handleResponse(response) {
+function handleResponse(response: Response) {
   if (response.ok) {
     return response.json();
   }
@@ -18,12 +18,13 @@ function handleResponse(response) {
   throw new Error('Response status is not ok: ' + response.status);
 }
 
-function fetchJson(url, options = {}) {
+function fetchJson(url: string, options: RequestInit = {}) {
   if (options.method && (options.method.toUpperCase() === 'POST' || options.method.toUpperCase() === 'PUT')) {
-    options.headers = Object.assign({}, options.headers || {}, {
-      Accept: 'application/json',
+    options.headers = {
+      ...(options.headers as { [key: string]: string } || {}),
+      'Accept': 'application/json',
       'Content-Type': 'application/json'
-    });
+    } as HeadersInit;
   }
 
   return fetch(`${API_ENDPOINT}/${url}`, options)
@@ -36,19 +37,19 @@ function getProjects() {
   return fetchJson('projects');
 }
 
-function getProject(projectId) {
+function getProject(projectId: number) {
   return fetchJson(`projects/${projectId}`);
 }
 
-function getDocuments(projectId) {
+function getDocuments(projectId: number) {
   return fetchJson(`projects/${projectId}/documents`);
 }
 
-function getDocument(projectId, documentId) {
+function getDocument(projectId: number, documentId) {
   return fetchJson(`projects/${projectId}/documents/${documentId}`);
 }
 
-function saveDocument(projectId, document, documentId) {
+function saveDocument(projectId: number, document, documentId: number) {
   return fetchJson(
     `projects/${projectId}/documents${documentId ? '/' + documentId : ''}`, {
       method: documentId ? 'PUT' : 'POST',
@@ -64,7 +65,7 @@ function saveProject(project) {
     });
 }
 
-function updateProject(id, project) {
+function updateProject(id: number, project) {
   return fetchJson(
     `projects/${id}`, {
       method: 'PUT',
@@ -72,11 +73,11 @@ function updateProject(id, project) {
     });
 }
 
-function removeProject(id) {
+function removeProject(id: number) {
   return fetchJson(
     `projects/${id}`, {
       method: 'DELETE',
-      body: id
+      body: JSON.stringify(id)
     });
 }
 

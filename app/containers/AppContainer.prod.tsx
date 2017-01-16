@@ -1,18 +1,18 @@
-import React, { Component, PropTypes } from 'react';
-import { hashHistory, Router } from 'react-router';
+import * as React from 'react';
 import { Provider } from 'react-redux';
+import { hashHistory, Router } from 'react-router';
 
-class AppContainer extends Component {
-  static propTypes = {
-    routes: PropTypes.object.isRequired,
-    store: PropTypes.object.isRequired
-  }
+interface IAppContainerProps {
+  routes: any;
+  store: any;
+}
 
-  shouldComponentUpdate() {
+class AppContainer extends React.Component<IAppContainerProps, {}> {
+  public shouldComponentUpdate() {
     return false;
   }
 
-  render() {
+  public render() {
     const { routes, store } = this.props;
 
     return (

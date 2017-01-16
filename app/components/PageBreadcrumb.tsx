@@ -1,20 +1,21 @@
-import React, { PropTypes as T } from 'react';
+import * as React from 'react';
 import { Breadcrumb, Loader } from 'semantic-ui-react';
 
-const PageBreadcrumb = ({ sections, isLoading }) => (
+export interface IPageBreadcrumbProps {
+  sections: string[];
+  isLoading: boolean;
+}
+
+const PageBreadcrumb: React.SFC<IPageBreadcrumbProps> = ({ sections, isLoading }: IPageBreadcrumbProps): JSX.Element => (
   <div>
     <Loader size="tiny" className="breadcrumb-loader" active={isLoading} inline={true} />
     <Breadcrumb icon="right angle" size="tiny" sections={sections} />
   </div>
 );
 
-PageBreadcrumb.propTypes = {
-  isLoading: T.bool,
-  sections: T.array.isRequired
-};
-
 PageBreadcrumb.defaultProps = {
-  isLoading: false
+  isLoading: false,
+  sections: []
 };
 
 export default PageBreadcrumb;

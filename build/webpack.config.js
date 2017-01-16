@@ -15,7 +15,7 @@ const webpackConfig = {
   module: {},
   resolve: {
     modules: [paths.client(), 'node_modules'],
-    extensions: ['.js', '.jsx', '.json', '.']
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.']
   }
 };
 
@@ -100,6 +100,9 @@ webpackConfig.module.rules = [{
   exclude: /node_modules/,
   loader: 'babel',
   query: config.compiler_babel
+}, { 
+  test: /\.tsx?$/, 
+  loader: 'awesome-typescript-loader' 
 }, {
   test: /\.json$/,
   loader: 'json'

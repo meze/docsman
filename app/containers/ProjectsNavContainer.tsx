@@ -1,32 +1,34 @@
-import React, { Component, PropTypes as T } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { formatPattern } from 'react-router';
-import ProjectsNav from '../components/ProjectsNav';
-import * as ProjectActions from '../modules/Project/actions/handlers';
+import ProjectsNav, { IProjectNavItem } from '../components/ProjectsNav';
 import documentUri from '../modules/Document/uri';
+import * as ProjectActions from '../modules/Project/actions/handlers';
 
-class ProjectsNavContainer extends Component {
-  static contextTypes = {
-    router: T.object.isRequired
-  }
 
-  static propTypes = {
-    fetchIfNeeded: T.func.isRequired,
-    isLoading: T.bool.isRequired,
-    items: T.array.isRequired,
-    selectedProject: T.number
-  }
+export interface IProjectsNavContainerProps {
+  items: any[];
+  isLoading: boolean;
+  selectedProject: number;
+  fetchIfNeeded(): void;
+}
 
-  componentDidMount() {
+
+class ProjectsNavContainer extends React.Component<IProjectsNavContainerProps, {}> {
+  public static contextTypes = {
+    router: React.PropTypes.object.isRequired
+  };
+
+  public componentDidMount() {
     this.props.fetchIfNeeded();
   }
 
-  handleItemClick = (e, { name }) => {
+  public handleItemClick = (e: Event, { name }: IProjectNavItem) => {
     e.preventDefault();
     this.context.router.push(formatPattern(documentUri.documents, { project: name }));
   }
 
-  render() {
+  public render() {
     const { items, isLoading, selectedProject } = this.props;
 
     return (

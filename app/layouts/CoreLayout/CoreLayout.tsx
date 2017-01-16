@@ -1,18 +1,27 @@
-import React, { PropTypes as T } from 'react';
-import { Container, Grid, Menu, Divider } from 'semantic-ui-react';
+import * as React from 'react';
 import { formatPattern } from 'react-router';
+import { Container, Divider, Grid, Menu } from 'semantic-ui-react';
 import ProjectsNavContainer from '../../containers/ProjectsNavContainer';
 import projectUri from '../../modules/Project/uri';
 
-const CoreLayout = ({ children, routeParams }, context) => {
+export interface ICoreLayoutProps {
+  children: JSX.Element;
+  routeParams: ICoreLayoutRouteParams;
+}
+
+export interface ICoreLayoutRouteParams {
+  project: number;
+}
+
+const CoreLayout: React.SFC<ICoreLayoutProps> = ({ children, routeParams }, context): JSX.Element => {
   const onAddProjectClick = (e) => {
     e.preventDefault();
-    context.router.push(formatPattern(projectUri.create));
+    context.router.push(formatPattern(projectUri.create, {}));
   };
 
   const onProjectsClick = (e) => {
     e.preventDefault();
-    context.router.push(formatPattern('/'));
+    context.router.push(formatPattern('/', {}));
   };
 
   return (
@@ -28,11 +37,11 @@ const CoreLayout = ({ children, routeParams }, context) => {
                 <Menu.Item name="home" active={context.router.location.pathname.startsWith('/projects')} onClick={onProjectsClick}>
                   Projects
                 </Menu.Item>
-                <Menu.Item name="testimonials" active={'' === 'testimonials'}>
+                <Menu.Item>
                   Trash
                   {' '}
                 </Menu.Item>
-                <Menu.Item name="testimonials" active={context.router.isActive(projectUri.create)} className="add-project" onClick={onAddProjectClick}>
+                <Menu.Item active={context.router.isActive(projectUri.create)} className="add-project" onClick={onAddProjectClick}>
                   Add Project
                   {' '}
                 </Menu.Item>
@@ -43,7 +52,7 @@ const CoreLayout = ({ children, routeParams }, context) => {
       </Grid>
 
       <Container className="main">
-        <ProjectsNavContainer selectedProject={parseInt(routeParams.project, 10)} />
+        <ProjectsNavContainer selectedProject={parseInt((routeParams.project || 0).toString(), 10)} />
         <Divider />
         {children}
       </Container>
@@ -52,12 +61,7 @@ const CoreLayout = ({ children, routeParams }, context) => {
 };
 
 CoreLayout.contextTypes = {
-  router: T.object.isRequired
-};
-
-CoreLayout.propTypes = {
-  children: T.element.isRequired,
-  routeParams: T.object
+  router: React.PropTypes.object.isRequired
 };
 
 export default CoreLayout;

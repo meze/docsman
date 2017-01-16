@@ -1,22 +1,33 @@
-import React, { PropTypes as T } from 'react';
+import * as React from 'react';
 import { notice } from '../utils/notification';
 
-/* global ContentTools */
-export default class ContentEditor extends React.Component {
-  static propTypes = {
-    onSave: T.func.isRequired,
-    text: T.string
-  };
+declare var ContentTools: any;
+declare var require: any;
 
-  state = {
-    text: null,
-    editor: null
-  };
+export interface IContentEditorProps {
+  text: string;
+  onSave(text: string): void;
+}
 
-  componentDidMount() {
+export interface IContentEditorState {
+  text?: string;
+  editor?: any;
+}
+
+export default class ContentEditor extends React.Component<IContentEditorProps, IContentEditorState> {
+  constructor(props: IContentEditorProps) {
+    super(props);
+
+    this.state = {
+      text: null,
+      editor: null
+    };
+  }
+
+  public componentDidMount() {
     this.loadEditor().then(() => {
       this.setState({
-        editor: new ContentTools.EditorApp.get() // eslint-disable-line new-cap
+        editor: new ContentTools.EditorApp.get()
       }, () => {
         this.state.editor.init('[data-editable]', 'data-editable');
         this.state.editor.addEventListener('saved', (event) => {
@@ -26,13 +37,13 @@ export default class ContentEditor extends React.Component {
     });
   }
 
-  componentWillReceiveProps(props) {
+  public componentWillReceiveProps(props) {
     this.setState({
       text: props.text || ''
     });
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     if (this.state.editor) {
       this.state.editor.removeEventListener('saved');
       this.state.editor.destroy();
@@ -42,7 +53,17 @@ export default class ContentEditor extends React.Component {
     }
   }
 
-  editorChange(text) {
+  public render(): JSX.Element {
+    const innerHtml = {
+      __html: `<div data-editable="text-component">${this.state.text ? this.state.text : ''}</div>`
+    };
+
+    return (
+      <div key="text-component" className="text-component" dangerouslySetInnerHTML={innerHtml} />
+    );
+  }
+
+  private editorChange(text) {
     this.setState(text ? { text } : {}, () => {
       this.save();
       // HACK: Reselect the region DOM elements for the editor after state change.
@@ -50,7 +71,7 @@ export default class ContentEditor extends React.Component {
     });
   }
 
-  save() {
+  private save() {
     if (typeof this.state.text === 'undefined') {
       notice('No changes are found. Skipped saving.');
 
@@ -59,10 +80,10 @@ export default class ContentEditor extends React.Component {
     this.props.onSave(this.state.text);
   }
 
-  loadEditor() {
+  private loadEditor() {
     return new Promise((resolve, reject) => {
       try {
-        require.ensure([], (require) => {
+        require.ensure([], () => {
           require('ContentTools');
           resolve();
         });
@@ -70,15 +91,5 @@ export default class ContentEditor extends React.Component {
         reject(err);
       }
     });
-  }
-
-  render() {
-    const innerHtml = {
-      __html: `<div data-editable="text-component">${this.state.text ? this.state.text : ''}</div>`
-    };
-
-    return (
-      <div key="text-component" className="text-component" dangerouslySetInnerHTML={innerHtml} />
-    );
   }
 }
