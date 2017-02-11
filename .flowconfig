@@ -1,0 +1,8 @@
+[ignore]
+.*node_modules/fbjs.*
+
+[options]
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue
+module.name_mapper.extension='css' -> '<PROJECT_ROOT>/cssModule.js.flow'
+module.name_mapper.extension='less' -> '<PROJECT_ROOT>/cssModule.js.flow'

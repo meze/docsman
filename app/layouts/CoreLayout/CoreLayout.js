@@ -1,16 +1,21 @@
+// @flow
 import React, { PropTypes as T } from 'react';
 import { Container, Grid, Menu, Divider } from 'semantic-ui-react';
 import { formatPattern } from 'react-router';
 import ProjectsNavContainer from '../../containers/ProjectsNavContainer';
 import projectUri from '../../modules/Project/uri';
 
-const CoreLayout = ({ children, routeParams }, context) => {
-  const onAddProjectClick = (e) => {
+type RouteParamsType = {
+  project: number
+}
+
+const CoreLayout = ({ children, routeParams }: {children: React.Element<*>, routeParams: RouteParamsType}, context: { router: Object }) => {
+  const onAddProjectClick = (e: Event) => {
     e.preventDefault();
     context.router.push(formatPattern(projectUri.create));
   };
 
-  const onProjectsClick = (e) => {
+  const onProjectsClick = (e: Event) => {
     e.preventDefault();
     context.router.push(formatPattern('/'));
   };

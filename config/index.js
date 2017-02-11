@@ -29,7 +29,7 @@ const config = {
   // ----------------------------------
   compiler_babel : {
     cacheDirectory : true,
-    plugins        : ['transform-runtime', 'transform-es2015-modules-commonjs'],
+    plugins        : ['transform-runtime', 'transform-es2015-modules-commonjs', 'transform-flow-strip-types'],
     presets        : ['es2015', 'react', 'stage-1']
   },
   compiler_devtool         : 'source-map',

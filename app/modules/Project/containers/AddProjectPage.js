@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { formatPattern } from 'react-router';
@@ -7,22 +8,32 @@ import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import AddProjectForm from '../components/AddProjectForm';
 import * as actions from '../actions/handlers';
 import documentUri from '../../Document/uri';
+import type { ProjectStateType } from '../actions/state';
+import type { ProjectType } from '../project';
+
+type StateType = {
+  name: string
+}
+
+type PropsType = {
+  isLoading: boolean,
+  actions: {
+    save: (state: StateType) => Promise<{ project: ProjectType }>
+  }
+}
 
 class AddProjectPage extends Component {
-  static propTypes = {
-    actions: T.object.isRequired,
-    isLoading: T.bool.isRequired
-  }
-
   static contextTypes = {
-    router: T.object.isRequired
+    router: PropTypes.object.isRequired
   }
 
-  state = {
+  state: StateType = {
     name: ''
   }
 
-  handleChange = (data) => {
+  props: PropsType
+
+  handleChange = (data: StateType) => {
     this.setState(data);
   }
 
@@ -43,7 +54,7 @@ class AddProjectPage extends Component {
 
     return (
       <section className="body">
-        <PageBreadcrumb sections={sections} />
+        <PageBreadcrumb sections={sections} isLoading={false} />
         <Grid>
           <Grid.Column width={16}>
             <AddProjectForm
@@ -58,7 +69,7 @@ class AddProjectPage extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: { projects: ProjectStateType }) => {
   const {
     isLoading
   } = state.projects;
@@ -68,7 +79,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     actions: bindActionCreators(actions, dispatch)
   };

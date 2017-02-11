@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link, formatPattern } from 'react-router';
@@ -8,27 +9,25 @@ import ContentEditor from '../../../components/ContentEditor';
 import * as documentActions from '../actions/handlers';
 import * as projectActions from '../../Project/actions/handlers';
 import documentUri from '../uri';
+import type { DocumentStateType } from '../actions/state';
+import type { DocumentType } from '../document';
+import type { ProjectType } from '../../Project/project';
+import type { ProjectStateType } from '../../Project/actions/state';
+
+type PropsType = {
+  projectActions: Object,
+  documentActions: Object,
+  projectId: number,
+  documentId: number,
+  isLoading: boolean,
+  project: ProjectType,
+  document: DocumentType,
+  routeParams: Object
+}
 
 class DocumentPage extends Component {
-  static propTypes = {
-    document: T.shape({
-      name: T.string.isRequired,
-      content: T.string,
-      id: T.number.isRequired
-    }),
-    documentActions: T.object.isRequired,
-    documentId: T.number.isRequired,
-    isLoading: T.bool.isRequired,
-    project: T.shape({
-      id: T.number.isRequired,
-      name: T.string.isRequired
-    }),
-    projectActions: T.object.isRequired,
-    projectId: T.number.isRequired
-  }
-
   static contextTypes = {
-    router: T.object.isRequired
+    router: PropTypes.object.isRequired
   }
 
   componentDidMount() {
@@ -38,15 +37,17 @@ class DocumentPage extends Component {
     }
   }
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(props: PropsType) {
     if (props.projectId !== this.props.projectId || props.documentId !== this.props.documentId) {
       this.props.documentActions.fetchOne(props.projectId, props.documentId);
       this.props.projectActions.switchTo(props.projectId);
     }
   }
 
-  save = (content) => {
-    this.props.documentActions.update(this.props.documentId, {
+  props: PropsType
+
+  save = (content: ?string) => {
+    this.props.documentActions.update({
       id: this.props.documentId,
       projectId: this.props.projectId,
       content,
@@ -76,7 +77,7 @@ class DocumentPage extends Component {
                 {document.name}
               </Header>
               <Button
-                icon="pencil"
+                icon="setting"
                 onClick={this.handleSettingsClick}
                 floated="right"
                 compact={true}
@@ -93,7 +94,7 @@ class DocumentPage extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }, ownProps: PropsType) => {
   const { projects, documents } = state;
 
   return {
@@ -105,7 +106,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     documentActions: bindActionCreators(documentActions, dispatch),
     projectActions: bindActionCreators(projectActions, dispatch)

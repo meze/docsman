@@ -1,4 +1,7 @@
+// @flow
+import type { ProjectType } from '../project';
 import types from './types';
+import initialState from './state';
 
 // ------------------------------------
 // Action Handlers
@@ -6,14 +9,15 @@ import types from './types';
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = {
-  isLoading: false,
-  didInvalidate: true,
-  items: [],
-  currentProject: { id: 0, name: '', isLoading: true }
-};
 
-export default (state = initialState, action) => {
+type ActionType = {
+  type: string,
+  projects?: ProjectType[],
+  id?: number,
+  project?: ProjectType
+}
+
+export default (state: typeof initialState = initialState, action: ActionType) => {
   switch (action.type) {
     case types.INVALIDATE_PROJECTS:
       return {
@@ -49,17 +53,22 @@ export default (state = initialState, action) => {
         isLoading: false
       };
     case types.UPDATE_PROJECT:
+      const project = action.project;
+      if (!project) {
+        return state;
+      }
+
       const items = Array.from(state.items);
-      const key = items.findIndex((x) => x.id === action.projectId);
+      const key = items.findIndex((x) => x && x.id === action.id);
       if (key >= 0) {
-        items[key] = action.project;
+        items[key] = project;
       }
 
       return {
         ...state,
         items,
         isLoading: false,
-        currentProject: state.currentProject && state.currentProject.id === action.project.id ? action.project : state.currentProject
+        currentProject: state.currentProject && state.currentProject.id === project.id ? project : state.currentProject
       };
     case types.NEW_PROJECT_REQUEST:
       return {

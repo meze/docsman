@@ -1,3 +1,4 @@
+// @flow
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
@@ -6,12 +7,12 @@ import DevTools from '../containers/DevTools';
 import { makeRootReducer } from './reducers';
 import { updateLocation } from './location';
 
-export default (initialState = {}) => {
+export default (initialState: Object = {}) => {
   const middleware = [thunk, createLogger()];
   const enhancers = [DevTools.instrument()];
 
   const store = createStore(
-    makeRootReducer(),
+    makeRootReducer(null),
     initialState,
     compose(
       applyMiddleware(...middleware),
@@ -22,7 +23,7 @@ export default (initialState = {}) => {
   store.unsubscribeHistory = browserHistory.listen(updateLocation(store));
 
   if (module.hot) {
-    module.hot.accept('./reducers', () => {
+    (module.hot: any).accept('./reducers', () => {
       const reducers = require('./reducers').default;
       store.replaceReducer(reducers(store.asyncReducers));
     });

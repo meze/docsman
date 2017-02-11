@@ -1,4 +1,7 @@
+// @flow
+import type { DocumentType } from '../document';
 import types from './types';
+import initialState from './state';
 
 // ------------------------------------
 // Action Handlers
@@ -6,22 +9,16 @@ import types from './types';
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = {
-  isLoading: false,
-  didInvalidate: true,
-  items: [],
-  projectId: 0,
-  lastItemId: 0,
-  selectedDocument: {
-    id: 0,
-    projectId: 0,
-    name: '',
-    content: '',
-    isLoading: true
-  }
-};
 
-export default (state = initialState, action) => {
+type ActionType = {
+  type: string,
+  items?: DocumentType[],
+  projectId?: number,
+  documentId?: number,
+  document?: DocumentType
+}
+
+export default (state: typeof initialState = initialState, action: ActionType) => {
   switch (action.type) {
     case types.INVALIDATE_DOCUMENTS:
       return {
@@ -57,6 +54,10 @@ export default (state = initialState, action) => {
         lastItemId: 0
       };
     case types.NEW_DOCUMENT:
+      if (!action.document) {
+        return state;
+      }
+
       return {
         ...state,
         isLoading: false,
@@ -89,17 +90,22 @@ export default (state = initialState, action) => {
         isLoading: false
       };
     case types.UPDATE_DOCUMENT:
+      const document = action.document;
+      if (!document) {
+        return state;
+      }
       const items = Array.from(state.items);
-      const key = items.findIndex((x) => x.id === action.documentId);
+      const key = items.findIndex((x) => x && x.id === document.id);
+
       if (key >= 0) {
-        items[key] = action.document;
+        items[key] = document;
       }
 
       return {
         ...state,
         items,
         isLoading: false,
-        selectedDocument: state.selectedDocument.id !== action.document.id ? state.selectedDocument : action.document
+        selectedDocument: state.selectedDocument.id !== document.id ? state.selectedDocument : document
       };
     default:
       return state;

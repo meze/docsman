@@ -1,9 +1,23 @@
-import React, { PropTypes as T } from 'react';
+// @flow
+import React from 'react';
 import { Form, Segment, Loader, Button, Label } from 'semantic-ui-react';
 import { form } from 'react-inform';
 import { notEmpty } from '../../../validation/rules';
 
-const AddDocumentForm = ({ fields: { name, content }, isLoading, onSave, onCancel, ...props }) => {
+type PropsType = {
+  onCancel: () => void,
+  onSave: () => void,
+  isLoading: boolean,
+  fields: {
+    name: Object,
+    content: Object
+  },
+  content: string,
+  form: Object,
+  name: string,
+}
+
+const AddDocumentForm = ({ fields: { name, content }, isLoading, onSave, onCancel, ...props }: PropsType) => {
   function handleSubmitForm(e) {
     e.preventDefault();
     if (props.form.isValid()) {
@@ -35,21 +49,11 @@ const AddDocumentForm = ({ fields: { name, content }, isLoading, onSave, onCance
   );
 };
 
-AddDocumentForm.propTypes = {
-  content: T.string,
-  fields: T.object.isRequired,
-  form: T.object.isRequired,
-  isLoading: T.bool,
-  name: T.string,
-  onCancel: T.func.isRequired,
-  onSave: T.func.isRequired
-};
-
 AddDocumentForm.defaultProps = {
   isLoading: false
 };
 
-const validate = ({ name }) => ({
+const validate = ({ name }: { name: string }) => ({
   ...notEmpty('name', name, 'A document needs a name')
 });
 

@@ -1,24 +1,24 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component } from 'react';
 import { Button, Header, Segment, Form, Message, Divider } from 'semantic-ui-react';
+import type { DocumentType } from '../document';
+
+type DocumentSettingsType = {
+  isLoading: boolean,
+  handleBackClick: () => void,
+  handleSubmit: () => void,
+  route: Object,
+  routeParams: Object,
+  document: DocumentType
+}
+
+type StateType = {
+  newName: string,
+  disableDeleteButton: boolean
+}
 
 export default class DocumentSettings extends Component {
-  static propTypes = {
-    document: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }).isRequired,
-    handleBackClick: T.func,
-    handleSubmit: T.func,
-    isLoading: T.bool,
-    /*project: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }).isRequired,*/
-    route: T.object,
-    routeParams: T.object
-  }
-
-  state = {
+  state: StateType = {
     newName: '',
     disableDeleteButton: true
   }
@@ -29,30 +29,32 @@ export default class DocumentSettings extends Component {
     });
   }
 
-  componentWillReceiveProps = (newProps) => {
+  componentWillReceiveProps = (newProps: DocumentSettingsType) => {
     this.setState({
       newName: newProps.document.name
     });
   }
 
-  toggleDeleteButton = (e, { checked }) => {
+  props: DocumentSettingsType;
+
+  toggleDeleteButton = (e: Event, { checked }: { checked: boolean }) => {
     this.setState({
       disableDeleteButton: !checked
     });
   }
 
-  handleNameChange = ({ target: { value } }) => {
+  handleNameChange = ({ target: { value } }: SyntheticInputEvent) => {
     this.setState({
       newName: value
     });
   }
 
-  handleBackClick = (e) => {
+  handleBackClick = (e: Event) => {
     e.preventDefault();
     this.props.handleBackClick();
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = (e: Event) => {
     e.preventDefault();
     this.props.handleSubmit(this.state.newName);
   }

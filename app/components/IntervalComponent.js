@@ -1,3 +1,4 @@
+// @flow
 import { Component } from 'react';
 
 export default class IntervalComponent extends Component {
@@ -9,7 +10,9 @@ export default class IntervalComponent extends Component {
     this.intervals.forEach(clearInterval);
   }
 
-  setInterval(fn, ms) {
+  intervals: number[];
+
+  setInterval(fn: Function, ms: number) {
     this.intervals.push(setInterval(fn, ms));
   }
 }

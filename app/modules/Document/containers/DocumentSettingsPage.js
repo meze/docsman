@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link, formatPattern } from 'react-router';
@@ -9,33 +10,32 @@ import DeleteDocumentForm from '../components/DeleteDocumentForm';
 import * as documentActions from '../actions/handlers';
 import * as projectActions from '../../Project/actions/handlers';
 import documentUri from '../uri';
+import type { DocumentStateType } from '../actions/state';
+import type { DocumentType, DocumentSettingsType } from '../document';
+import type { ProjectType } from '../../Project/project';
+import type { ProjectStateType } from '../../Project/actions/state';
+
+type PropsType = {
+  projectId: number,
+  documentId: number,
+  isLoading: boolean,
+  documentActions: Object,
+  projectActions: Object,
+  document: DocumentType,
+  project: ProjectType,
+  routeParams: Object
+}
+
+type StateType = {
+  settings: DocumentSettingsType
+}
 
 class DocumentSettingsPage extends Component {
-  static propTypes = {
-    document: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }),
-    documentActions: T.object.isRequired,
-    documentId: T.number.isRequired,
-    isLoading: T.bool.isRequired,
-    project: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }),
-    projectActions: T.object.isRequired,
-    projectId: T.number.isRequired
-  }
-
   static contextTypes = {
-    router: T.object.isRequired
+    router: PropTypes.object.isRequired
   }
 
-  static contextTypes = {
-    router: T.object.isRequired
-  }
-
-  state = {
+  state: StateType = {
     settings: {
       name: ''
     }
@@ -49,7 +49,7 @@ class DocumentSettingsPage extends Component {
     this.props.projectActions.switchTo(this.props.projectId);
   }
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(props: PropsType) {
     this.setState({
       settings: {
         name: props.document.name
@@ -61,7 +61,9 @@ class DocumentSettingsPage extends Component {
     }
   }
 
-  handleAddDocumentClick = (e) => {
+  props: PropsType
+
+  handleAddDocumentClick = (e: Event) => {
     e.preventDefault();
     this.context.router.push('/projects/' + this.props.projectId + '/createDocument');
   }
@@ -70,7 +72,7 @@ class DocumentSettingsPage extends Component {
     this.context.router.push('/projects/' + this.props.projectId + '/documents');
   }
 
-  handleSubmit = (projectName) => {
+  handleSubmit = (projectName: string) => {
     this.props.documentActions.update(Object.assign({}, this.props.project, {
       name: projectName
     }));
@@ -90,7 +92,7 @@ class DocumentSettingsPage extends Component {
     });
   }
 
-  onChange = (data) => {
+  onChange = (data: DocumentSettingsType) => {
     this.setState({
       settings: data
     });
@@ -125,7 +127,7 @@ class DocumentSettingsPage extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }, ownProps: PropsType) => {
   const { projects, documents } = state;
 
   return {
@@ -137,7 +139,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     documentActions: bindActionCreators(documentActions, dispatch),
     projectActions: bindActionCreators(projectActions, dispatch)

@@ -1,27 +1,31 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { formatPattern } from 'react-router';
 import ProjectsNav from '../components/ProjectsNav';
 import * as ProjectActions from '../modules/Project/actions/handlers';
 import documentUri from '../modules/Document/uri';
+import type { ProjectType } from '../modules/Project/project';
+
+type PropsType = {
+  fetchIfNeeded: Function,
+  isLoading: boolean,
+  items: ProjectType[],
+  selectedProject: number
+}
 
 class ProjectsNavContainer extends Component {
   static contextTypes = {
-    router: T.object.isRequired
-  }
-
-  static propTypes = {
-    fetchIfNeeded: T.func.isRequired,
-    isLoading: T.bool.isRequired,
-    items: T.array.isRequired,
-    selectedProject: T.number
+    router: PropTypes.object.isRequired
   }
 
   componentDidMount() {
     this.props.fetchIfNeeded();
   }
 
-  handleItemClick = (e, { name }) => {
+  props: PropsType
+
+  handleItemClick = (e: Event, { name }: { name: string }) => {
     e.preventDefault();
     this.context.router.push(formatPattern(documentUri.documents, { project: name }));
   }
@@ -40,7 +44,7 @@ class ProjectsNavContainer extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: { projects: Object }, ownProps: PropsType) => {
   const { projects } = state;
   const {
     isLoading,
@@ -57,7 +61,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     fetchIfNeeded: () => dispatch(ProjectActions.fetchIfNeeded())
   };

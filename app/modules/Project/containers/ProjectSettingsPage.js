@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link, formatPattern } from 'react-router';
@@ -8,23 +9,27 @@ import ProjectSettingsForm from '../components/ProjectSettingsForm';
 import DeleteProjectForm from '../components/DeleteProjectForm';
 import * as actions from '../../Project/actions/handlers';
 import documentUri from '../../Document/uri';
+import type { ProjectStateType } from '../actions/state';
+import type { ProjectType, ProjectSettingsType } from '../project';
+
+type PropsType = {
+  actions: typeof actions,
+  isLoading: boolean,
+  project: ProjectType,
+  projectId: number,
+  routeParams: Object
+}
+
+type StateType = {
+  settings: ProjectSettingsType
+}
 
 class ProjectSettingsPage extends Component {
-  static propTypes = {
-    actions: T.object.isRequired,
-    isLoading: T.bool.isRequired,
-    project: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }).isRequired,
-    projectId: T.number.isRequired
-  }
-
   static contextTypes = {
-    router: T.object.isRequired
+    router: PropTypes.object.isRequired
   }
 
-  state = {
+  state: StateType = {
     settings: {
       name: ''
     }
@@ -36,7 +41,7 @@ class ProjectSettingsPage extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps(newProps: PropsType) {
     this.setState({
       settings: {
         name: newProps.project.name
@@ -46,6 +51,8 @@ class ProjectSettingsPage extends Component {
       this.props.actions.switchTo(newProps.projectId);
     }
   }
+
+  props: PropsType
 
   onBackClick = () => {
     this.context.router.push(formatPattern(documentUri.documents, { project: this.props.project.id }));
@@ -61,7 +68,7 @@ class ProjectSettingsPage extends Component {
     });
   }
 
-  onChange = (data) => {
+  onChange = (data: ProjectSettingsType) => {
     this.setState({
       settings: data
     });
@@ -97,7 +104,7 @@ class ProjectSettingsPage extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: { projects: ProjectStateType }, ownProps: PropsType) => {
   const { projects } = state;
   const {
     isLoading
@@ -112,7 +119,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     actions: bindActionCreators(actions, dispatch)
   };

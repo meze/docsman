@@ -1,1 +1,2 @@
-export const notEmpty = (name, value, msg) => (typeof value === 'undefined' || value === '' || value === null) ? { [name]: msg } : null;
+// @flow
+export const notEmpty = (name: string, value: ?string, msg: string) => (typeof value === 'undefined' || value === '' || value === null) ? { [name]: msg } : null;

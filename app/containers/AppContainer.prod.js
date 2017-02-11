@@ -1,16 +1,19 @@
-import React, { Component, PropTypes } from 'react';
+// @flow
+import React, { Component } from 'react';
 import { hashHistory, Router } from 'react-router';
 import { Provider } from 'react-redux';
 
-class AppContainer extends Component {
-  static propTypes = {
-    routes: PropTypes.object.isRequired,
-    store: PropTypes.object.isRequired
-  }
+type PropsType = {
+  routes: Object,
+  store: Object
+}
 
+class AppContainer extends Component {
   shouldComponentUpdate() {
     return false;
   }
+
+  props: PropsType
 
   render() {
     const { routes, store } = this.props;

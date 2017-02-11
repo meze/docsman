@@ -1,23 +1,31 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component } from 'react';
 import { Button, Header, Segment, Form, Message } from 'semantic-ui-react';
 
-export default class DeleteDocumentForm extends Component {
-  static propTypes = {
-    isLoading: T.bool,
-    onRemove: T.func.isRequired
-  }
+type DeleteDocumentFormPropsType = {
+  isLoading: boolean,
+  onRemove: () => void
+}
 
+type DeleteDocumentFormStateType = {
+  disableButton: boolean
+}
+
+export default class DeleteDocumentForm extends Component {
   state = {
     disableButton: true
   }
 
-  toggleButton = (e, { checked }) => {
+  state: DeleteDocumentFormStateType;
+  props: DeleteDocumentFormPropsType;
+
+  toggleButton = (e: Event, { checked }: HTMLInputElement) => {
     this.setState({
       disableButton: !checked
     });
   }
 
-  handleRemove = (e) => {
+  handleRemove = (e: Event) => {
     e.preventDefault();
     this.props.onRemove();
   }

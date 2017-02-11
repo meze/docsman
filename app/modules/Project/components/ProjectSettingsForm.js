@@ -1,15 +1,28 @@
-import React, { PropTypes as T } from 'react';
+// @flow
+import React from 'react';
 import { Button, Header, Segment, Form, Divider, Label } from 'semantic-ui-react';
 import { form } from 'react-inform';
 import { notEmpty } from '../../../validation/rules';
 
-const ProjectSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...props }) => {
-  function handleBackClick(e) {
+type PropsType = {
+  fields: {
+    name: Object,
+    content: Object
+  },
+  form: Object,
+  isLoading: boolean,
+  name: string,
+  onBackClick: () => void,
+  onSave: () => void
+}
+
+const ProjectSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...props }: PropsType) => {
+  function handleBackClick(e: Event) {
     e.preventDefault();
     onBackClick();
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: Event) {
     e.preventDefault();
     if (props.form.isValid()) {
       onSave();
@@ -33,18 +46,7 @@ const ProjectSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...
   );
 };
 
-ProjectSettingsForm.propTypes = {
-  fields: T.object.isRequired,
-  form: T.object.isRequired,
-  isLoading: T.bool,
-  name: T.string,
-  onBackClick: T.func.isRequired,
-  onChange: T.func,
-  onSave: T.func.isRequired,
-  value: T.object
-};
-
-const validate = ({ name }) => ({
+const validate = ({ name }: { name: string }) => ({
   ...notEmpty('name', name, 'A project needs a name')
 });
 

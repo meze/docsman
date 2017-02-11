@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import ReactDOM from 'react-dom';
 import createStore from './store/createStore';
@@ -6,6 +7,8 @@ import 'semantic-ui-css/semantic.css';
 import 'notie/dist/notie.css';
 import 'ContentTools/build/content-tools.min.css';
 import './styles/body.less';
+
+declare var __DEV__: boolean;
 
 const initialState = window.___INITIAL_STATE__;
 const store = createStore(initialState);
@@ -38,7 +41,7 @@ if (__DEV__) {
       }
     };
 
-    module.hot.accept('./modules/index', () =>
+    (module.hot: any).accept('./modules/index', () =>
       setImmediate(() => {
         ReactDOM.unmountComponentAtNode(MOUNT_NODE);
         render();

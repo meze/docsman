@@ -1,3 +1,4 @@
+// @flow
 import React, { Component, PropTypes as T } from 'react';
 import { formatPattern } from 'react-router';
 import { connect } from 'react-redux';
@@ -9,21 +10,24 @@ import * as documentActions from '../actions/handlers';
 import * as projectActions from '../../Project/actions/handlers';
 import projectUri from '../../Project/uri';
 import documentUri from '../uri';
+import type { DocumentStateType } from '../actions/state';
+import type { DocumentType } from '../document';
+import type { ProjectType } from '../../Project/project';
+import type { ProjectStateType } from '../../Project/actions/state';
+
+type PropsType = {
+  lastId: number,
+  documentId: number,
+  isLoading: boolean,
+  documentActions: Object,
+  projectActions: Object,
+  project: ProjectType,
+  routeParams: Object,
+  selectedProject: number,
+  items: DocumentType[]
+}
 
 class DocumentsPage extends Component {
-  static propTypes = {
-    documentActions: T.object.isRequired,
-    isLoading: T.bool.isRequired,
-    items: T.array.isRequired,
-    lastId: T.number,
-    project: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }),
-    projectActions: T.object.isRequired,
-    selectedProject: T.string
-  }
-
   static contextTypes = {
     router: T.object.isRequired
   }
@@ -33,7 +37,7 @@ class DocumentsPage extends Component {
     this.props.projectActions.switchTo(this.props.selectedProject);
   }
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(props: PropsType) {
     if (props.selectedProject !== this.props.selectedProject) {
       this.props.documentActions.invalidate();
       this.props.documentActions.fetchIfNeeded(props.selectedProject);
@@ -41,12 +45,15 @@ class DocumentsPage extends Component {
     }
   }
 
-  handleAddDocumentClick = (e) => {
+  props: PropsType
+
+  handleAddDocumentClick = (e: Event) => {
     e.preventDefault();
     this.context.router.push(formatPattern(documentUri.create, { project: this.props.selectedProject }));
   }
 
-  handleSettingsClick = () => {
+  handleSettingsClick = (e: Event) => {
+    e.preventDefault();
     this.context.router.push(formatPattern(projectUri.settings, { project: this.props.selectedProject }));
   }
 
@@ -76,7 +83,7 @@ class DocumentsPage extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }, ownProps: PropsType) => {
   const { documents, projects } = state;
   const {
     isLoading,
@@ -97,7 +104,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     documentActions: bindActionCreators(documentActions, dispatch),
     projectActions: bindActionCreators(projectActions, dispatch)

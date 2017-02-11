@@ -1,5 +1,8 @@
+// @flow
 import { API_ENDPOINT } from '../config/api';
 import { handleError } from '../utils/notification';
+import type { ProjectType } from '../modules/Project/project';
+import type { DocumentType } from '../modules/Document/document';
 import 'whatwg-fetch';
 
 function catchError(on) {
@@ -18,8 +21,9 @@ function handleResponse(response) {
   throw new Error('Response status is not ok: ' + response.status);
 }
 
-function fetchJson(url, options = {}) {
-  if (options.method && (options.method.toUpperCase() === 'POST' || options.method.toUpperCase() === 'PUT')) {
+function fetchJson(url: string, options: RequestOptions = {}) {
+  const method = options.method;
+  if (method && (method.toUpperCase() === 'POST' || method.toUpperCase() === 'PUT')) {
     options.headers = Object.assign({}, options.headers || {}, {
       Accept: 'application/json',
       'Content-Type': 'application/json'
@@ -36,27 +40,27 @@ function getProjects() {
   return fetchJson('projects');
 }
 
-function getProject(projectId) {
+function getProject(projectId: number) {
   return fetchJson(`projects/${projectId}`);
 }
 
-function getDocuments(projectId) {
+function getDocuments(projectId: number) {
   return fetchJson(`projects/${projectId}/documents`);
 }
 
-function getDocument(projectId, documentId) {
+function getDocument(projectId: number, documentId: number) {
   return fetchJson(`projects/${projectId}/documents/${documentId}`);
 }
 
-function saveDocument(projectId, document, documentId) {
+function saveDocument(projectId: number, document: DocumentType) {
   return fetchJson(
-    `projects/${projectId}/documents${documentId ? '/' + documentId : ''}`, {
-      method: documentId ? 'PUT' : 'POST',
+    `projects/${projectId}/documents${document.id ? '/' + document.id : ''}`, {
+      method: document.id ? 'PUT' : 'POST',
       body: JSON.stringify(document)
     });
 }
 
-function saveProject(project) {
+function saveProject(project: ProjectType) {
   return fetchJson(
     'projects', {
       method: 'POST',
@@ -64,7 +68,7 @@ function saveProject(project) {
     });
 }
 
-function updateProject(id, project) {
+function updateProject(id: number, project: ProjectType) {
   return fetchJson(
     `projects/${id}`, {
       method: 'PUT',
@@ -72,11 +76,11 @@ function updateProject(id, project) {
     });
 }
 
-function removeProject(id) {
+function removeProject(id: number) {
   return fetchJson(
     `projects/${id}`, {
       method: 'DELETE',
-      body: id
+      body: id.toString()
     });
 }
 

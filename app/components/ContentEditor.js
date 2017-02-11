@@ -1,16 +1,34 @@
-import React, { PropTypes as T } from 'react';
+// @flow
+import React from 'react';
 import { notice } from '../utils/notification';
 
-/* global ContentTools */
-export default class ContentEditor extends React.Component {
-  static propTypes = {
-    onSave: T.func.isRequired,
-    text: T.string
-  };
+declare var ContentTools;
 
-  state = {
-    text: null,
-    editor: null
+type ContentToolsType = {
+  init: (selectior: string, attr: string) => void,
+  addEventListener: (event: string, func: (event: any) => void) => void,
+  destroy: () => void,
+  removeEventListener: (event: string) => void,
+  _domRegions: NodeList<HTMLElement>
+}
+
+type PropsType = {
+  text: ?string,
+  onSave: (content: ?string) => void,
+}
+
+export default class ContentEditor extends React.Component {
+  constructor(props: PropsType) {
+    super(props);
+    this.state = {
+      text: null,
+      editor: null
+    };
+  }
+
+  state: {
+    text: ?string,
+    editor: ?ContentToolsType
   };
 
   componentDidMount() {
@@ -18,35 +36,46 @@ export default class ContentEditor extends React.Component {
       this.setState({
         editor: new ContentTools.EditorApp.get() // eslint-disable-line new-cap
       }, () => {
-        this.state.editor.init('[data-editable]', 'data-editable');
-        this.state.editor.addEventListener('saved', (event) => {
-          this.editorChange(event.detail().regions['text-component']);
-        });
+        const editor = this.state.editor;
+        if (editor != null) {
+          editor.init('[data-editable]', 'data-editable');
+          editor.addEventListener('saved', (event) => {
+            this.editorChange(event.detail().regions['text-component']);
+          });
+        }
       });
     });
   }
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(props: PropsType) {
     this.setState({
       text: props.text || ''
     });
   }
 
   componentWillUnmount() {
-    if (this.state.editor) {
-      this.state.editor.removeEventListener('saved');
-      this.state.editor.destroy();
-      this.setState({
-        editor: null
-      });
+    const editor = this.state.editor;
+    if (editor == null) {
+      return;
     }
+    editor.removeEventListener('saved');
+    editor.destroy();
+    this.setState({
+      editor: null
+    });
   }
 
-  editorChange(text) {
+  props: PropsType;
+
+  editorChange(text: string) {
     this.setState(text ? { text } : {}, () => {
       this.save();
+      const editor = this.state.editor;
+      if (editor == null) {
+        return;
+      }
       // HACK: Reselect the region DOM elements for the editor after state change.
-      this.state.editor._domRegions = document.querySelectorAll('[data-editable]'); // eslint-disable-line
+      editor._domRegions = document.querySelectorAll('[data-editable]'); // eslint-disable-line
     });
   }
 
@@ -56,13 +85,18 @@ export default class ContentEditor extends React.Component {
 
       return;
     }
+
+    if (this.props.onSave == null) {
+      return;
+    }
+
     this.props.onSave(this.state.text);
   }
 
   loadEditor() {
     return new Promise((resolve, reject) => {
       try {
-        require.ensure([], (require) => {
+        (require : any).ensure([], () => {
           require('ContentTools');
           resolve();
         });

@@ -8,7 +8,7 @@
   "extends": [
     "standard"
   ],
-  "plugins": ["react", "import", "babel", "promise"],
+  "plugins": ["react", "import", "babel", "promise", "flowtype"],
 
   "globals": {
     "__DEV__"      : false,
@@ -36,7 +36,7 @@
     "no-alert": 2, // disallow the use of alert, confirm, and prompt
     "no-div-regex": 2, // disallow division operators explicitly at beginning of regular expression (off by default)
     "no-else-return": 2, // disallow else after a return in an if (off by default)
-    "no-eq-null": 2, // disallow comparisons to null without a type-checking operator (off by default)
+    "no-eq-null": 0, // disallow comparisons to null without a type-checking operator (off by default)
     "no-loop-func": 2, // disallow creation of functions within loops
     "no-param-reassign": 2, // disallow reassignment of function parameters (off by default)
     "no-script-url": 2, // disallow use of javascript: urls.
@@ -139,6 +139,13 @@
     "import/no-named-as-default": 2,
     "import/no-nodejs-modules": 2,
     "import/no-webpack-loader-syntax": 2,
-    "import/order": 2
+    "import/order": 2,
+
+    "flowtype/define-flow-type": 2,
+    "flowtype/no-primitive-constructor-types": 2,
+    "flowtype/object-type-delimiter": [2, "comma"],
+    "flowtype/semi": [2, "never"],
+    "flowtype/space-after-type-colon": [2, "always"],
+    "flowtype/type-id-match": 2
   }
 }

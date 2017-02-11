@@ -1,10 +1,19 @@
-import React, { Component, PropTypes as T } from 'react';
+// @flow
+import React, { Component } from 'react';
 import { Table, Button, Header, Segment, Divider } from 'semantic-ui-react';
 import { Link, formatPattern } from 'react-router';
 import Timeago from '../../../components/Timeago';
 import documentUri from '../uri';
+import type { DocumentType } from '../document';
+import type { ProjectType } from '../../Project/project';
 
-const TableFullWidth = (props) => {
+type TableFullWidthPropsType = {
+  items: DocumentType[],
+  projectId: number,
+  lastId: number
+}
+
+const TableFullWidth = (props: TableFullWidthPropsType) => {
   const rows = props.items.map((item) => {
     // const arr = ['jpeg', 'doc', 'pdf', 'tiff'];
     // const key = Math.floor(Math.random() * arr.length);
@@ -15,8 +24,10 @@ const TableFullWidth = (props) => {
       {arr[key]}
     </Table.Cell> */
 
+    const isLast = item.id === props.lastId;
+
     return (
-      <Table.Row key={item.id} warning={item.id === props.lastId}>
+      <Table.Row key={item.id} warning={isLast}>
         <Table.Cell>
           <Link to={formatPattern(documentUri.document, { project: props.projectId, document: item.id })}>{item.name}</Link>
         </Table.Cell>
@@ -43,31 +54,20 @@ const TableFullWidth = (props) => {
   );
 };
 
-TableFullWidth.propTypes = {
-  items: T.array,
-  lastId: T.number,
-  projectId: T.number.isRequired
-};
+type DocumentListPropsType = {
+  items: DocumentType[],
+  project: ProjectType,
+  handleSettingsClick: (e: Event) => void,
+  handleAddDocumentClick: (e: Event) => void,
+  isLoading: boolean,
+  lastId: number
+}
 
 export default class DocumentList extends Component {
-  static propTypes = {
-    handleAddDocumentClick: T.func,
-    handleSettingsClick: T.func,
-    isLoading: T.bool,
-    items: T.array,
-    lastId: T.number,
-    project: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }),
-    projectId: T.string,
-    route: T.object,
-    routeParams: T.object
-  }
+  props: DocumentListPropsType
 
-  handleSettingsClick = (e) => {
-    e.preventDefault();
-    this.props.handleSettingsClick();
+  handleSettingsClick = (e: Event) => {
+    this.props.handleSettingsClick(e);
   }
 
   render() {
@@ -75,22 +75,24 @@ export default class DocumentList extends Component {
       <section>
         <Segment loading={this.props.isLoading}>
           <Header floated="left">Documents</Header>
-          <Button
-            icon="pencil"
-            floated="right"
-            compact={true}
-            color="grey"
-            size="small"
-            onClick={this.handleSettingsClick}
-          />
-          <Button
-            floated="right"
-            compact={true}
-            primary={true}
-            size="small"
-            onClick={this.props.handleAddDocumentClick}
-            content="Add"
-          />
+          <span className="sticker">
+            <Button
+              icon="setting"
+              floated="right"
+              compact={true}
+              color="grey"
+              size="small"
+              onClick={this.handleSettingsClick}
+            />
+            <Button
+              floated="right"
+              compact={true}
+              primary={true}
+              size="small"
+              onClick={this.props.handleAddDocumentClick}
+              content="Add"
+            />
+          </span>
           <Divider clearing={true} />
           <TableFullWidth lastId={this.props.lastId} items={this.props.items} projectId={this.props.project.id} />
         </Segment>

@@ -1,7 +1,21 @@
-import React, { PropTypes as T } from 'react';
+// @flow
+import React from 'react';
 import { Menu, Label, Loader } from 'semantic-ui-react';
 
-const ProjectsNav = ({ handleItemClick, items, activeItem, isLoading }) => {
+type MenuItemType = {
+  name: string,
+  id: number,
+  [key: any]: any
+}
+
+type PropsType = {
+  isLoading: boolean,
+  activeItem: ?number,
+  handleItemClick: (e: Event, args: { name: string }) => void,
+  items: MenuItemType[]
+}
+
+const ProjectsNav = ({ handleItemClick, items, activeItem, isLoading }: PropsType) => {
   const menuItems = items.map((item) => {
     return (<Menu.Item name={item.id.toString()} key={item.id} active={item.id === activeItem} onClick={handleItemClick}>
       {item.name}
@@ -14,16 +28,6 @@ const ProjectsNav = ({ handleItemClick, items, activeItem, isLoading }) => {
       {menuItems}
     </Menu>
   );
-};
-
-ProjectsNav.propTypes = {
-  activeItem: T.number,
-  handleItemClick: T.func.isRequired,
-  isLoading: T.bool.isRequired,
-  items: T.arrayOf(T.shape({
-    name: T.string.isRequired,
-    id: T.number.isRequired
-  })).isRequired
 };
 
 export default ProjectsNav;

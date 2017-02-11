@@ -1,5 +1,8 @@
+// @flow
 import api from '../../../middleware/api';
 import { success } from '../../../utils/notification';
+import type { ProjectType } from '../project';
+import type { ProjectStateType } from './state';
 import types from './types';
 
 export const request = () => ({
@@ -10,12 +13,12 @@ export const invalidate = () => ({
   type: types.INVALIDATE_PROJECTS
 });
 
-export const receive = (data) => ({
+export const receive = (data: ProjectType[]) => ({
   type: types.RECEIVE_PROJECTS,
   projects: data
 });
 
-const doFetch = () => (dispatch) => {
+const doFetch = () => (dispatch: Function) => {
   dispatch(request());
 
   return api.projects.get()
@@ -27,7 +30,7 @@ const doFetch = () => (dispatch) => {
     });
 };
 
-const shouldFetch = (state) => {
+const shouldFetch = (state: { projects: ProjectStateType }) => {
   const projects = state.projects;
 
   if (projects.isLoading) {
@@ -41,7 +44,7 @@ const shouldFetch = (state) => {
   return projects.didInvalidate;
 };
 
-export const fetchIfNeeded = () => (dispatch, getState) => {
+export const fetchIfNeeded = () => (dispatch: Function, getState: Function) => {
   if (shouldFetch(getState())) {
     return dispatch(doFetch());
   }
@@ -51,7 +54,7 @@ export const fetchIfNeeded = () => (dispatch, getState) => {
 
 // single
 
-const shouldSwitch = (newProjectId, state) => {
+const shouldSwitch = (newProjectId: number, state: { projects: ProjectStateType }) => {
   const projects = state.projects;
 
   if (projects.currentProject && projects.currentProject.id === newProjectId) {
@@ -61,12 +64,12 @@ const shouldSwitch = (newProjectId, state) => {
   return true;
 };
 
-export const switchReceive = (data) => ({
+export const switchReceive = (data: ProjectType[]) => ({
   type: types.SWITCH_PROJECT,
   project: data
 });
 
-export const switchTo = (projectId) => (dispatch, getState) => {
+export const switchTo = (projectId: number) => (dispatch: Function, getState: Function) => {
   if (!shouldSwitch(projectId, getState())) {
     return Promise.resolve();
   }
@@ -88,7 +91,7 @@ export const switchTo = (projectId) => (dispatch, getState) => {
 // Updaters
 //
 
-export const receiveNew = (project) => {
+export const receiveNew = (project: ProjectType) => {
   success('A project was created.');
 
   return {
@@ -97,7 +100,7 @@ export const receiveNew = (project) => {
   };
 };
 
-export const save = (project) => (dispatch) => {
+export const save = (project: ProjectType) => (dispatch: Function) => {
   dispatch({
     type: types.NEW_PROJECT_REQUEST
   });
@@ -109,17 +112,17 @@ export const save = (project) => (dispatch) => {
     }));
 };
 
-export const receiveUpdated = (project) => {
+export const receiveUpdated = (project: ProjectType) => {
   success('A project name was changed.');
 
   return {
     type: types.UPDATE_PROJECT,
-    projectId: project.id,
+    id: project.id,
     project: project
   };
 };
 
-export const update = (project) => (dispatch) => {
+export const update = (project: ProjectType) => (dispatch: Function) => {
   dispatch({
     type: types.UPDATE_PROJECT_REQUEST
   });
@@ -131,7 +134,7 @@ export const update = (project) => (dispatch) => {
     }));
 };
 
-const receiveRemovedError = (err) => (dispatch) => {
+const receiveRemovedError = (err: Error) => (dispatch: Function) => {
   dispatch({
     type: types.REMOVE_PROJECT_ERROR
   });
@@ -139,7 +142,7 @@ const receiveRemovedError = (err) => (dispatch) => {
   throw err;
 };
 
-export const receiveRemoved = (id) => {
+export const receiveRemoved = (id: number) => {
   success('A project was removed.');
 
   return {
@@ -148,7 +151,7 @@ export const receiveRemoved = (id) => {
   };
 };
 
-export const remove = (id) => (dispatch) => {
+export const remove = (id: number): (dispatch: Function) => Promise<ProjectType> => (dispatch) => {
   dispatch({
     type: types.REMOVE_PROJECT_REQUEST
   });

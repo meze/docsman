@@ -1,3 +1,4 @@
+// @flow
 import React, { Component, PropTypes as T } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,18 +8,19 @@ import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import AddDocumentForm from '../components/AddDocumentForm';
 import * as actions from '../actions/handlers';
 import documentUri from '../uri';
+import type { ProjectType } from '../../Project/project';
+import type { DocumentType } from '../document';
+import type { DocumentStateType } from '../actions/state';
+import type { ProjectStateType } from '../../Project/actions/state';
+
+type AddDocumentPagePropsType = {
+  isLoading: boolean,
+  actions: (project: ProjectType) => Promise<DocumentType>,
+  project: ProjectType,
+  routeParams: Object
+}
 
 class AddDocumentPage extends Component {
-  static propTypes = {
-    actions: T.object.isRequired,
-    isLoading: T.bool.isRequired,
-    project: T.shape({
-      name: T.string.isRequired,
-      id: T.number.isRequired
-    }).isRequired,
-    routeParams: T.object
-  }
-
   static contextTypes = {
     router: T.object.isRequired
   }
@@ -29,7 +31,15 @@ class AddDocumentPage extends Component {
     content: ''
   }
 
-  handleChange = (data) => {
+  state: {
+    isLoading: boolean,
+    name: string,
+    content: string
+  }
+
+  props: AddDocumentPagePropsType
+
+  handleChange = (data: Object) => {
     this.setState(data);
   }
 
@@ -73,7 +83,7 @@ class AddDocumentPage extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }) => {
   const { documents, projects } = state;
   const {
     isLoading
@@ -87,7 +97,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProp = (dispatch) => {
+const mapDispatchToProp = (dispatch: Function) => {
   return {
     actions: bindActionCreators(actions, dispatch)
   };

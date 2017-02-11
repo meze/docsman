@@ -1,3 +1,4 @@
+// @flow
 export default {
   ADD_PROJECT: 'ADD_PROJECT',
   REQUEST_PROJECTS: 'REQUEST_PROJECTS',

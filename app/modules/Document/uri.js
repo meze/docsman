@@ -1,3 +1,4 @@
+// @flow
 export default {
   create: '/projects/:project/createDocument',
   documents: '/projects/:project/documents',
