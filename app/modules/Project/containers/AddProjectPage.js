@@ -8,17 +8,17 @@ import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import AddProjectForm from '../components/AddProjectForm';
 import * as actions from '../actions/handlers';
 import documentUri from '../../Document/uri';
-import type { ProjectStateType } from '../actions/state';
-import type { ProjectType } from '../project';
+import type { ProjectPayloadType } from '../project';
+import type { StateType, TypedActionType } from '../../../types/redux';
 
-type StateType = {
+type LocalStateType = {
   name: string
 }
 
 type PropsType = {
   isLoading: boolean,
   actions: {
-    save: (state: StateType) => Promise<{ project: ProjectType }>
+    save: (state: LocalStateType) => Promise<TypedActionType<ProjectPayloadType>>
   }
 }
 
@@ -27,20 +27,20 @@ class AddProjectPage extends Component {
     router: PropTypes.object.isRequired
   }
 
-  state: StateType = {
+  state: LocalStateType = {
     name: ''
   }
 
   props: PropsType
 
-  handleChange = (data: StateType) => {
+  handleChange = (data: LocalStateType) => {
     this.setState(data);
   }
 
   onSave = () => {
     return this.props.actions.save({
       name: this.state.name
-    }).then(({ project }) => {
+    }).then(({ payload: { project } }) => {
       this.context.router.push(formatPattern(documentUri.documents, { project: project.id }));
     });
   }
@@ -69,7 +69,7 @@ class AddProjectPage extends Component {
   }
 }
 
-const mapStateToProps = (state: { projects: ProjectStateType }) => {
+const mapStateToProps = (state: StateType) => {
   const {
     isLoading
   } = state.projects;

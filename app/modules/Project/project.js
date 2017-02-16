@@ -8,3 +8,15 @@ export type ProjectType = {
 export type ProjectSettingsType = {
   name: string
 }
+
+export type ProjectsPayloadType = {
+  projects: ProjectType[]
+}
+
+export type ProjectPayloadType = {
+  project: ProjectType
+}
+
+export type ProjectRemovePayloadType = {
+  id: number
+}

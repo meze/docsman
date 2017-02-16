@@ -1,5 +1,6 @@
 // @flow
-import type { DocumentType } from '../document';
+import type { TypedActionType } from '../../../types/redux';
+import type { DocumentsPayloadType, DocumentPayloadType } from '../document';
 import types from './types';
 import initialState from './state';
 
@@ -9,16 +10,8 @@ import initialState from './state';
 // ------------------------------------
 // Reducer
 // ------------------------------------
-
-type ActionType = {
-  type: string,
-  items?: DocumentType[],
-  projectId?: number,
-  documentId?: number,
-  document?: DocumentType
-}
-
-export default (state: typeof initialState = initialState, action: ActionType) => {
+type StateType = typeof initialState
+export default (state: StateType = initialState, action: TypedActionType<*>): StateType => {
   switch (action.type) {
     case types.INVALIDATE_DOCUMENTS:
       return {
@@ -32,53 +25,64 @@ export default (state: typeof initialState = initialState, action: ActionType) =
         isLoading: true,
         didInvalidate: false
       };
-    case types.RECEIVE_DOCUMENTS:
+    case types.RECEIVE_DOCUMENTS: {
+      const payload: DocumentsPayloadType = action.payload;
+
       return {
         ...state,
         isLoading: false,
         didInvalidate: false,
-        items: action.items,
-        projectId: action.projectId
+        items: payload.documents,
+        projectId: payload.projectId
       };
-    case types.RECEIVE_DOCUMENTS_ERROR:
+    }
+    case types.RECEIVE_DOCUMENTS_ERROR: {
+      const payload: DocumentsPayloadType = action.payload;
+
       return {
         ...state,
         items: [],
-        projectId: action.projectId,
+        projectId: payload.projectId,
         isLoading: false
       };
+    }
     case types.NEW_DOCUMENT_REQUEST:
       return {
         ...state,
         isLoading: true,
         lastItemId: 0
       };
-    case types.NEW_DOCUMENT:
-      if (!action.document) {
+    case types.NEW_DOCUMENT: {
+      const payload: DocumentPayloadType = action.payload;
+      if (!payload.document) {
         return state;
       }
 
       return {
         ...state,
         isLoading: false,
-        lastItemId: action.document.id,
+        lastItemId: payload.document.id,
         items: [
-          action.document,
+          payload.document,
           ...state.items
         ]
       };
+    }
     case types.REQUEST_DOCUMENT:
       return {
         ...state,
         isLoading: true,
         selectedDocument: initialState.selectedDocument
       };
-    case types.RECEIVE_DOCUMENT:
+    case types.RECEIVE_DOCUMENT: {
+      const payload: DocumentPayloadType = action.payload;
+
       return {
         ...state,
         isLoading: false,
-        selectedDocument: action.document
+        selectedDocument: payload.document
       };
+    }
     case types.REQUEST_UPDATE_DOCUMENT:
       return {
         ...state,
@@ -90,7 +94,7 @@ export default (state: typeof initialState = initialState, action: ActionType) =
         isLoading: false
       };
     case types.UPDATE_DOCUMENT:
-      const document = action.document;
+      const document = (action.payload: DocumentPayloadType).document;
       if (!document) {
         return state;
       }

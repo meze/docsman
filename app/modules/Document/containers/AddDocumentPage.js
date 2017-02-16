@@ -7,16 +7,28 @@ import { Grid } from 'semantic-ui-react';
 import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import AddDocumentForm from '../components/AddDocumentForm';
 import * as actions from '../actions/handlers';
+import * as projectActions from '../../Project/actions/handlers';
 import documentUri from '../uri';
 import type { ProjectType } from '../../Project/project';
-import type { DocumentType } from '../document';
-import type { DocumentStateType } from '../actions/state';
-import type { ProjectStateType } from '../../Project/actions/state';
+import type { DocumentPayloadType } from '../document';
+import type { StateType, TypedActionType } from '../../../types/redux';
 
-type AddDocumentPagePropsType = {
+type NewDocumentType = {
+  name: string,
+  content: string,
+  projectId: number
+}
+
+type PropsType = {
   isLoading: boolean,
-  actions: (project: ProjectType) => Promise<DocumentType>,
+  actions: {
+    save: (document: NewDocumentType) => Promise<TypedActionType<DocumentPayloadType>>
+  },
+  projectActions: {
+    switchTo: typeof projectActions.switchTo
+  },
   project: ProjectType,
+  projectId: number,
   routeParams: Object
 }
 
@@ -37,7 +49,28 @@ class AddDocumentPage extends Component {
     content: string
   }
 
-  props: AddDocumentPagePropsType
+  /*componentDidMount() {
+    console.log('project mounted to', this.props.routeParams.project);
+  }
+
+  componentWillReceiveProps(newProps: PropsType) {
+    console.log('project received to', this.props.routeParams.project);
+  }*/
+
+  componentDidMount() {
+    if (this.props.projectId === 0) {
+      return;
+    }
+    this.props.projectActions.switchTo(this.props.projectId);
+  }
+
+  componentWillReceiveProps(props: PropsType) {
+    if (props.projectId !== this.props.projectId) {
+      this.props.projectActions.switchTo(props.projectId);
+    }
+  }
+
+  props: PropsType
 
   handleChange = (data: Object) => {
     this.setState(data);
@@ -48,7 +81,7 @@ class AddDocumentPage extends Component {
       name: this.state.name,
       content: this.state.content,
       projectId: this.props.routeParams.project
-    }).then(({ document }) => {
+    }).then(({ payload: { document } }) => {
       this.context.router.push(formatPattern(documentUri.documents, { project: document.projectId }));
     });
   }
@@ -83,7 +116,7 @@ class AddDocumentPage extends Component {
   }
 }
 
-const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }) => {
+const mapStateToProps = (state: StateType, ownProps: PropsType) => {
   const { documents, projects } = state;
   const {
     isLoading
@@ -93,13 +126,15 @@ const mapStateToProps = (state: { documents: DocumentStateType, projects: Projec
 
   return {
     isLoading,
-    project: projects.currentProject
+    project: projects.currentProject,
+    projectId: parseInt(ownProps.routeParams.project, 10) || 0
   };
 };
 
 const mapDispatchToProp = (dispatch: Function) => {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators(actions, dispatch),
+    projectActions: bindActionCreators(projectActions, dispatch)
   };
 };
 

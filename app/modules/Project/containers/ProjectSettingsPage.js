@@ -9,8 +9,8 @@ import ProjectSettingsForm from '../components/ProjectSettingsForm';
 import DeleteProjectForm from '../components/DeleteProjectForm';
 import * as actions from '../../Project/actions/handlers';
 import documentUri from '../../Document/uri';
-import type { ProjectStateType } from '../actions/state';
 import type { ProjectType, ProjectSettingsType } from '../project';
+import type { StateType } from '../../../types/redux';
 
 type PropsType = {
   actions: typeof actions,
@@ -20,7 +20,7 @@ type PropsType = {
   routeParams: Object
 }
 
-type StateType = {
+type LocalStateType = {
   settings: ProjectSettingsType
 }
 
@@ -29,7 +29,7 @@ class ProjectSettingsPage extends Component {
     router: PropTypes.object.isRequired
   }
 
-  state: StateType = {
+  state: LocalStateType = {
     settings: {
       name: ''
     }
@@ -104,7 +104,7 @@ class ProjectSettingsPage extends Component {
   }
 }
 
-const mapStateToProps = (state: { projects: ProjectStateType }, ownProps: PropsType) => {
+const mapStateToProps = (state: StateType, ownProps: PropsType) => {
   const { projects } = state;
   const {
     isLoading

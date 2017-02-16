@@ -11,3 +11,12 @@ export type DocumentType = {
 export type DocumentSettingsType = {
   name: string
 }
+
+export type DocumentsPayloadType = {
+  documents?: DocumentType[],
+  projectId: number
+}
+
+export type DocumentPayloadType = {
+  document: DocumentType
+}

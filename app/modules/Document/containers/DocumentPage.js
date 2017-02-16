@@ -9,10 +9,9 @@ import ContentEditor from '../../../components/ContentEditor';
 import * as documentActions from '../actions/handlers';
 import * as projectActions from '../../Project/actions/handlers';
 import documentUri from '../uri';
-import type { DocumentStateType } from '../actions/state';
 import type { DocumentType } from '../document';
 import type { ProjectType } from '../../Project/project';
-import type { ProjectStateType } from '../../Project/actions/state';
+import type { StateType } from '../../../types/redux';
 
 type PropsType = {
   projectActions: Object,
@@ -94,7 +93,7 @@ class DocumentPage extends Component {
   }
 }
 
-const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }, ownProps: PropsType) => {
+const mapStateToProps = (state: StateType, ownProps: PropsType) => {
   const { projects, documents } = state;
 
   return {

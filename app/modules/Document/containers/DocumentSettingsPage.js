@@ -10,10 +10,9 @@ import DeleteDocumentForm from '../components/DeleteDocumentForm';
 import * as documentActions from '../actions/handlers';
 import * as projectActions from '../../Project/actions/handlers';
 import documentUri from '../uri';
-import type { DocumentStateType } from '../actions/state';
 import type { DocumentType, DocumentSettingsType } from '../document';
 import type { ProjectType } from '../../Project/project';
-import type { ProjectStateType } from '../../Project/actions/state';
+import type { StateType } from '../../../types/redux';
 
 type PropsType = {
   projectId: number,
@@ -26,7 +25,7 @@ type PropsType = {
   routeParams: Object
 }
 
-type StateType = {
+type LocalStateType = {
   settings: DocumentSettingsType
 }
 
@@ -35,7 +34,7 @@ class DocumentSettingsPage extends Component {
     router: PropTypes.object.isRequired
   }
 
-  state: StateType = {
+  state: LocalStateType = {
     settings: {
       name: ''
     }
@@ -127,7 +126,7 @@ class DocumentSettingsPage extends Component {
   }
 }
 
-const mapStateToProps = (state: { documents: DocumentStateType, projects: ProjectStateType }, ownProps: PropsType) => {
+const mapStateToProps = (state: StateType, ownProps: PropsType) => {
   const { projects, documents } = state;
 
   return {

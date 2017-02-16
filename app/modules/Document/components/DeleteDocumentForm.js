@@ -39,7 +39,7 @@ export default class DeleteDocumentForm extends Component {
           <Header content="Move this document to trash" dividing={true} />
           <br />
           <Form className="fluid" onSubmit={this.handleRemove}>
-            <Form.Checkbox onChange={this.toggleButton} inline={true} label="Yes, I want to move this document to trash" />
+            <Form.Checkbox name="confirmed" onChange={this.toggleButton} inline={true} label="Yes, I want to move this document to trash" />
             <Button color="red" size="small" disabled={this.state.disableButton}>Trash</Button>
           </Form>
         </Message>
