@@ -54,14 +54,13 @@ if (__DEV__) {
   webpackConfig.plugins.push(
     new WebpackNotifierPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin()
   );
   debug('Enable dev server');
   webpackConfig.devServer = {
     contentBase: paths.client(),
     host: config.server_host,
     port: config.server_port,
-    colors: true,
     historyApiFallback: true,
     inline: true,
     hot: true
@@ -98,7 +97,7 @@ if (!__TEST__) {
 webpackConfig.module.rules = [{
   test: /\.(js|jsx)$/,
   exclude: /node_modules/,
-  loader: 'babel',
+  loader: 'babel-loader',
   query: config.compiler_babel
 }, {
   test: /\.json$/,
@@ -108,36 +107,34 @@ webpackConfig.module.rules = [{
 // ------------------------------------
 // Style rules
 // ------------------------------------
-const BASE_CSS_LOADER = 'css?sourceMap';
+const BASE_CSS_LOADER = 'css-loader?sourceMap';
 
 webpackConfig.module.rules.push({
   test: /\.less$/,
-  exclude: null,
   loaders: [
-    'style',
+    'style-loader',
     BASE_CSS_LOADER,
-    'less'
+    'less-loader'
   ]
 });
 
 webpackConfig.module.rules.push({
   test: /\.css$/,
-  exclude: null,
   loaders: [
-    'style',
+    'style-loader',
     BASE_CSS_LOADER
   ]
 });
 
 // File rules
 webpackConfig.module.rules.push(
-  { test: /\.woff(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
-  { test: /\.woff2(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
-  { test: /\.otf(\?.*)?$/, loader: 'file?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
-  { test: /\.ttf(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
-  { test: /\.eot(\?.*)?$/, loader: 'file?prefix=fonts/&name=[path][name].[ext]' },
-  { test: /\.svg(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-  { test: /\.(png|jpg)$/, loader: 'url?limit=8192' }
+  { test: /\.woff(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
+  { test: /\.woff2(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
+  { test: /\.otf(\?.*)?$/, loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
+  { test: /\.ttf(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
+  { test: /\.eot(\?.*)?$/, loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]' },
+  { test: /\.svg(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
+  { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
 );
 
 module.exports = webpackConfig;
