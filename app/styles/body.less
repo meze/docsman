@@ -13,19 +13,28 @@ body {
   background: #556270;
 }
 
-.ui.inverted.pointing.menu .active.item:after, .ui.inverted.pointing.menu .active.item:hover:after {
-  background: #6e7985 !important;
-}
+.head.ui.inverted.menu .item {
+  border-radius: 0;
+  transition: background 200ms ease,
+    border-radius 200ms ease,
+    transform 250ms ease;
 
-.ui.inverted.pointing.menu .item:hover {
-  background: #77889a;
+  &.active {
+    background-color: #3B8686;
+    transform: translate(0, 3px);
+    box-shadow: 3px -3px 0px 3px rgba(73,153,153,1);
 
-  &:after {
-    background: #77889a !important;
+    border-radius: 30% 10%;
+
+    &:hover {
+      background-color: #79BD9A;
+    }
+
+    * {
+      transition:  transform 350ms ease;
+      transform: translate(0, -3px);
+    }
   }
-}
-.ui.inverted.pointing.menu .active.item:hover:after {
-  background: #77889a !important;
 }
 
 .ui.secondary.menu {
@@ -43,11 +52,6 @@ body {
     background: #EFECA7;
   }
 }
-
-/*
-.content {
-  background: #fff !important;
-}*/
 
 .main {
   padding-top: 1rem;
@@ -74,13 +78,7 @@ body {
     font-size: 0.9em;
   }
 }
-/**
-Hex	RGB
-#449966	(68,153,102)
-#ccff77	(204,255,119)
-#444444	(68,68,68)
-#bbbbbb
-*/
+
 .ct-widget.ct-ignition {
   width: 100px;
   left: 50%;
@@ -116,14 +114,6 @@ Hex	RGB
   background-color: rgba(243, 215, 18, 0.04);
 }
 
-/*
-.row {
-  border: 1px solid red !important;
-}
-.column {
-  border: 1px solid #ccff77 !important;
-}*/
-
 .ui.secondary.menu .item {
   background: #E1E5B7;
 }
@@ -139,22 +129,6 @@ section.body {
   > div .ui.breadcrumb {
     padding-bottom: 1rem;
     padding-left: 1rem;
-  }
-}
-
-.head.ui.inverted.menu .item.add-project {
-  background-color: #3B8686;
-
-  &:hover {
-    background-color: #79BD9A;
-  }
-
-  &.active:after {
-    background-color: #3B8686 !important;
-  }
-
-  &.active:hover:after {
-    background-color: #79BD9A !important;
   }
 }
 
@@ -189,7 +163,6 @@ section.body {
     opacity: 1;
   }
 }
-
 
 .sixteen.wide.column > .ui.segment {
   -webkit-animation-name: opacity;

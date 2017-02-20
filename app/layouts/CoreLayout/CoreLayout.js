@@ -26,19 +26,19 @@ const CoreLayout = ({ children, routeParams }: {children: React.Element<*>, rout
         <Grid.Row>
           <Grid.Column width={16} className="top-nav">
             <Container>
-              <Menu size="small" inverted={true} pointing={true} className="head" borderless={true}>
+              <Menu size="small" inverted={true} className="head" borderless={true}>
                 <Menu.Item>
                   <h4 className="logo">Docsman<span className="subtext">ager</span></h4>
                 </Menu.Item>
                 <Menu.Item name="home" active={context.router.location.pathname.startsWith('/projects')} onClick={onProjectsClick}>
-                  Projects
+                  <span>Projects</span>
                 </Menu.Item>
                 <Menu.Item name="testimonials" active={'' === 'testimonials'}>
                   Trash
                   {' '}
                 </Menu.Item>
                 <Menu.Item name="testimonials" active={context.router.isActive(projectUri.create)} className="add-project" onClick={onAddProjectClick}>
-                  Add Project
+                  <span>Add Project</span>
                   {' '}
                 </Menu.Item>
               </Menu>
