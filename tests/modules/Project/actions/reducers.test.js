@@ -85,12 +85,12 @@ describe('(Modules - Project) Reducers', () => {
 
   it('removes project', () => {
     store = createStore(reducer, {
-      items: [{ id: 2, title: 'change' }, { id: 1, title: 'dontchange' }]
+      items: [{ id: 2, title: 'remove' }, { id: 1, title: 'dontremove' }]
     });
     store.dispatch(receiveRemoved(2));
 
     const actual = store.getState().items;
-    const expected = [{ id: 1, title: 'dontchange' }];
+    const expected = [{ id: 1, title: 'dontremove' }];
 
     expect(actual).toEqual(expected);
   });

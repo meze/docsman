@@ -26,7 +26,7 @@ function createWrapper(data) {
       save: (...args) => {
         data.saveArgs = args;
 
-        return Promise.resolve({ project: { id: 1 } });
+        return Promise.resolve({ payload: { project: { id: 1 } } });
       }
     }
   };
@@ -72,6 +72,7 @@ describe('(Modules - Project) containers/AddProjectPage', () => {
 
     wrapper.instance().onSave().then((...data) => {
       expect(_data.router.lastUrl()).toBe('/projects/1/documents');
+
       expect(_data.saveArgs[0]).toEqual({ name: 'test' });
 
       done();

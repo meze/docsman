@@ -1,13 +1,30 @@
 // @flow
 import { API_ENDPOINT } from '../config/api';
-import { handleError } from '../utils/notification';
+import { error, notice } from '../utils/notification';
 import type { ProjectType } from '../modules/Project/project';
 import type { DocumentType } from '../modules/Document/document';
 import 'whatwg-fetch';
 
+declare var __DEV__: boolean;
+
+function showError(message: string, err: any) {
+  error('A network error occurred.');
+  if (__DEV__) {
+    console.warn(message, err); // eslint-disable-line no-console
+  }
+}
+
+function showAuthorizationError() {
+  notice('Authentication is required.');
+}
+
 function catchError(on) {
   return (err) => {
-    handleError('Error on ' + on, err);
+    if (err.status === 401) {
+      showAuthorizationError();
+    } else {
+      showError('Error on ' + on, err);
+    }
 
     throw err;
   };
@@ -18,16 +35,27 @@ function handleResponse(response) {
     return response.json();
   }
 
-  throw new Error('Response status is not ok: ' + response.status);
+  // We can use error code in authorization middleware
+  const err = new Error('Response status is not ok: ' + response.status);
+  (err: Object).status = response.status;
+
+  throw err;
 }
 
 function fetchJson(url: string, options: RequestOptions = {}) {
   const method = options.method;
   if (method && (method.toUpperCase() === 'POST' || method.toUpperCase() === 'PUT')) {
-    options.headers = Object.assign({}, options.headers || {}, {
+    options.headers = {
       Accept: 'application/json',
-      'Content-Type': 'application/json'
-    });
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+  }
+
+  const token = localStorage.getItem('token');
+  if (token) {
+    const headers: { [key: string]: string } = options.headers || {};
+    options.headers = Object.assign(headers, { Authorization: 'Bearer ' + token });
   }
 
   return fetch(`${API_ENDPOINT}/${url}`, options)
@@ -84,6 +112,17 @@ function removeProject(id: number) {
     });
 }
 
+function login(email: string, password: string) {
+  return fetchJson(
+    `api/login_check`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      body: `_username=${encodeURIComponent(email)}&_password=${encodeURIComponent(password)}`
+    });
+}
+
 export default {
   projects: {
     get: getProjects,
@@ -96,5 +135,8 @@ export default {
     get: getDocuments,
     getOne: getDocument,
     save: saveDocument
+  },
+  security: {
+    login: login
   }
 };

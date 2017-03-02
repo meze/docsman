@@ -4,11 +4,12 @@ import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import { browserHistory } from 'react-router';
 import DevTools from '../containers/DevTools';
+import authenticationCheck from '../modules/Security/middlewares';
 import { makeRootReducer } from './reducers';
 import { updateLocation } from './location';
 
 export default (initialState: Object = {}) => {
-  const middleware = [thunk, createLogger()];
+  const middleware = [thunk, authenticationCheck, createLogger()];
   const enhancers = [DevTools.instrument()];
 
   const store = createStore(

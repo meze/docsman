@@ -32,7 +32,7 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions.length).toEqual(2);
       expect(actions[0].type).toEqual(types.REQUEST_PROJECTS);
       expect(actions[1].type).toEqual(types.RECEIVE_PROJECTS);
-      expect(actions[1].projects).toEqual([{ name: 'Test', id: 2 }]);
+      expect(actions[1].payload.projects).toEqual([{ name: 'Test', id: 2 }]);
 
       return done();
     }).catch((err) => {
@@ -55,7 +55,7 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions.length).toEqual(2);
       expect(actions[0].type).toEqual(types.SWITCH_PROJECT_REQUEST);
       expect(actions[1].type).toEqual(types.SWITCH_PROJECT);
-      expect(actions[1].project).toEqual({ name: 'Test', id: 1 });
+      expect(actions[1].payload.project).toEqual({ name: 'Test', id: 1 });
 
       return done();
     }).catch((err) => {
@@ -97,7 +97,7 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions.length).toEqual(2);
       expect(actions[0].type).toEqual(types.REQUEST_PROJECTS);
       expect(actions[1].type).toEqual(types.RECEIVE_PROJECTS);
-      expect(actions[1].projects).toEqual([{ name: 'Test', id: 2 }]);
+      expect(actions[1].payload.projects).toEqual([{ name: 'Test', id: 2 }]);
 
       return done();
     }).catch((err) => {
@@ -160,8 +160,8 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions.length).toEqual(2);
       expect(actions[0].type).toEqual(types.UPDATE_PROJECT_REQUEST);
       expect(actions[1].type).toEqual(types.UPDATE_PROJECT);
-      expect(actions[1].project).toEqual({ name: 'newname', id: 1 });
-      expect(actions[1].projectId).toEqual(1);
+      expect(actions[1].payload.project).toEqual({ name: 'newname', id: 1 });
+      //expect(actions[1].payload.projectId).toEqual(1);
 
       return done();
     }).catch((err) => {
@@ -192,7 +192,7 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions.length).toEqual(2);
       expect(actions[0].type).toEqual(types.NEW_PROJECT_REQUEST);
       expect(actions[1].type).toEqual(types.NEW_PROJECT);
-      expect(actions[1].project).toEqual({ name: 'new', id: 1 });
+      expect(actions[1].payload.project).toEqual({ name: 'new', id: 1 });
 
       return done();
     }).catch((err) => {
@@ -232,7 +232,7 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions.length).toBe(2);
       expect(actions[0].type).toBe(types.REMOVE_PROJECT_REQUEST);
       expect(actions[1].type).toBe(types.REMOVE_PROJECT);
-      expect(actions[1].id).toBe(1);
+      expect(actions[1].payload.id).toBe(1);
 
       return done();
     }).catch((err) => {

@@ -15,7 +15,7 @@ const webpackConfig = {
   module: {},
   resolve: {
     modules: [paths.client(), 'node_modules'],
-    extensions: ['.js', '.jsx', '.json', '.']
+    extensions: ['.js', '.jsx', '.json']
   }
 };
 
@@ -101,7 +101,7 @@ webpackConfig.module.rules = [{
   query: config.compiler_babel
 }, {
   test: /\.json$/,
-  loader: 'json'
+  loader: 'json-loader'
 }];
 
 // ------------------------------------

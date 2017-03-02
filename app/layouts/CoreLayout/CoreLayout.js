@@ -1,27 +1,58 @@
 // @flow
-import React, { PropTypes as T } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Container, Grid, Menu, Divider } from 'semantic-ui-react';
 import { formatPattern } from 'react-router';
 import ProjectsNavContainer from '../../containers/ProjectsNavContainer';
 import projectUri from '../../modules/Project/uri';
+import LoginForm from '../../modules/Security/components/LoginForm';
+import type { StateType } from '../../types/redux';
+import * as securityActions from '../../modules/Security/actions/handlers';
 
 type RouteParamsType = {
   project: number
 }
 
-const CoreLayout = ({ children, routeParams }: {children: React.Element<*>, routeParams: RouteParamsType}, context: { router: Object }) => {
-  const onAddProjectClick = (e: Event) => {
+type PropsType = {
+  children: React.Element<*>,
+  routeParams: RouteParamsType,
+  isAuthenticated: boolean,
+  securityActions: {
+    login: (email: string, password: string) => void,
+    logout: () => void
+  }
+}
+
+class CoreLayout extends Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
+
+  props: PropsType
+
+  onLogin = (email: string, password: string) => {
+    this.props.securityActions.login(email, password);
+  }
+
+  onLogout = () => {
+    this.props.securityActions.logout();
+  }
+
+  onAddProjectClick = (e: Event) => {
     e.preventDefault();
-    context.router.push(formatPattern(projectUri.create));
+    this.context.router.push(formatPattern(projectUri.create));
   };
 
-  const onProjectsClick = (e: Event) => {
+  onProjectsClick = (e: Event) => {
     e.preventDefault();
-    context.router.push(formatPattern('/'));
+    this.context.router.push(formatPattern('/'));
   };
 
-  return (
-    <div>
+  render() {
+    const { children, routeParams, isAuthenticated } = this.props;
+
+    return isAuthenticated ? <div>
       <Grid padded={true}>
         <Grid.Row>
           <Grid.Column width={16} className="top-nav">
@@ -30,15 +61,19 @@ const CoreLayout = ({ children, routeParams }: {children: React.Element<*>, rout
                 <Menu.Item>
                   <h4 className="logo">Docsman<span className="subtext">ager</span></h4>
                 </Menu.Item>
-                <Menu.Item name="home" active={context.router.location.pathname.startsWith('/projects')} onClick={onProjectsClick}>
+                <Menu.Item name="home" active={this.context.router.location.pathname.startsWith('/projects')} onClick={this.onProjectsClick}>
                   <span>Projects</span>
                 </Menu.Item>
                 <Menu.Item name="testimonials" active={'' === 'testimonials'}>
                   Trash
                   {' '}
                 </Menu.Item>
-                <Menu.Item name="testimonials" active={context.router.isActive(projectUri.create)} className="add-project" onClick={onAddProjectClick}>
+                <Menu.Item name="testimonials" active={this.context.router.isActive(projectUri.create)} className="add-project" onClick={this.onAddProjectClick}>
                   <span>Add Project</span>
+                  {' '}
+                </Menu.Item>
+                <Menu.Item name="testimonials" onClick={this.onLogout}>
+                  <span>Log Out</span>
                   {' '}
                 </Menu.Item>
               </Menu>
@@ -52,17 +87,18 @@ const CoreLayout = ({ children, routeParams }: {children: React.Element<*>, rout
         <Divider />
         {children}
       </Container>
-    </div>
-  );
+    </div> : <LoginForm login={this.onLogin} />;
+  }
+}
+
+const mapStateToProps = ({ security: securityState }: StateType, ownProps: PropsType) => ({
+  isAuthenticated: securityState.isAuthenticated
+});
+
+const mapDispatchToProp = (dispatch: Function) => {
+  return {
+    securityActions: bindActionCreators(securityActions, dispatch)
+  };
 };
 
-CoreLayout.contextTypes = {
-  router: T.object.isRequired
-};
-
-CoreLayout.propTypes = {
-  children: T.element.isRequired,
-  routeParams: T.object
-};
-
-export default CoreLayout;
+export default connect(mapStateToProps, mapDispatchToProp)(CoreLayout);

@@ -1,9 +1,10 @@
 // @flow
 import type { DocumentStateType } from '../modules/Document/actions/state';
 import type { ProjectStateType } from '../modules/Project/actions/state';
+import type { SecurityStateType } from '../modules/Security/actions/state';
 
 export type TypedActionType<P> = {
-  error?: false,
+  error?: null,
   type: string,
   payload: P
 }
@@ -12,7 +13,8 @@ export type ActionType = TypedActionType<any>
 
 export type StateType = {
   projects: ProjectStateType,
-  documents: DocumentStateType
+  documents: DocumentStateType,
+  security: SecurityStateType
 }
 
 export type CallableStateType = () => StateType

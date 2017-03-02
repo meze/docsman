@@ -7,11 +7,17 @@ import 'semantic-ui-css/semantic.css';
 import 'notie/dist/notie.css';
 import 'ContentTools/build/content-tools.min.css';
 import './styles/body.less';
+import { loggedIn } from './modules/Security/actions/handlers';
 
 declare var __DEV__: boolean;
 
 const initialState = window.___INITIAL_STATE__;
 const store = createStore(initialState);
+
+const token = localStorage.getItem('token');
+if (token) {
+  store.dispatch(loggedIn());
+}
 
 const MOUNT_NODE = document.getElementById('app');
 

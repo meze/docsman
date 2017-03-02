@@ -52,7 +52,7 @@ if (config.globals.__COVERAGE__) {
     enforce: 'pre',
     test: /\.(js|jsx)$/,
     include: new RegExp(config.dir_client),
-    loader: 'babel',
+    loader: 'babel-loader',
     query: Object.assign({}, config.compiler_babel, {
       plugins: (config.compiler_babel.plugins || []).concat('istanbul')
     })

@@ -27,10 +27,11 @@ const doFetch = (): AsyncActionType => (dispatch, getState): Promise<?ProjectTyp
 
   return api.projects.get()
     .then((data) => dispatch(receive(data)))
-    .catch(() => {
+    .catch((error) => {
       dispatch({
         type: types.RECEIVE_PROJECTS_ERROR,
-        payload: null
+        payload: null,
+        error: error
       });
     });
 };

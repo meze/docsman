@@ -1,8 +1,6 @@
 // @flow
 import notie from 'notie';
 
-declare var __DEV__: boolean;
-
 export function error(message: string) {
   notie.alert('error', message, 10);
 }
@@ -13,11 +11,4 @@ export function success(message: string) {
 
 export function notice(message: string) {
   notie.alert('warning', message, 5);
-}
-
-export function handleError(message: string, err: any) {
-  error('A network error occurred.');
-  if (__DEV__) {
-    console.warn(message, err); // eslint-disable-line no-console
-  }
 }
