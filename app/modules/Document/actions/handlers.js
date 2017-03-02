@@ -107,7 +107,11 @@ export const save = (document: DocumentType): AsyncActionType => (dispatch, getS
   dispatch(newDocumentRequest);
 
   return api.documents.save(document.projectId, document)
-    .then((data) => dispatch(receiveNew(data)));
+    .then((data) => {
+      dispatch(receiveNew(data));
+
+      return data;
+    });
 };
 
 export const receiveUpdated = (document: DocumentType): TypedActionType<DocumentPayloadType> => {

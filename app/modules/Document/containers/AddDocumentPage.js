@@ -81,7 +81,7 @@ class AddDocumentPage extends Component {
       name: this.state.name,
       content: this.state.content,
       projectId: this.props.routeParams.project
-    }).then(({ payload: { document } }) => {
+    }).then((document) => {
       this.context.router.push(formatPattern(documentUri.documents, { project: document.projectId }));
     });
   }

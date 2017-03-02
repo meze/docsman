@@ -40,7 +40,7 @@ class AddProjectPage extends Component {
   onSave = () => {
     return this.props.actions.save({
       name: this.state.name
-    }).then(({ payload: { project } }) => {
+    }).then((project) => {
       this.context.router.push(formatPattern(documentUri.documents, { project: project.id }));
     });
   }

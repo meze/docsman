@@ -109,7 +109,11 @@ export const save = (project: ProjectType): AsyncActionType => (dispatch, getSta
   });
 
   return api.projects.save(project)
-    .then((data) => dispatch(receiveNew(data)))
+    .then((data) => {
+      dispatch(receiveNew(data));
+
+      return data;
+    })
     .catch(() => dispatch({
       type: types.NEW_PROJECT_ERROR,
       payload: null
