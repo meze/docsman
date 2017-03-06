@@ -2,7 +2,7 @@
 import api from '../../../middleware/api';
 import { success } from '../../../utils/notification';
 import type { TypedActionType, AsyncActionType, StateType, ActionType } from '../../../types/redux';
-import type { DocumentType, DocumentsPayloadType, DocumentPayloadType } from '../document';
+import type { DocumentType, DocumentsPayloadType, DocumentPayloadType, DocumentRemovePayloadType } from '../document';
 import types from './types';
 
 // ------------------------------------
@@ -146,7 +146,7 @@ const receiveRemovedError = (err: Error): AsyncActionType => (dispatch, getState
   throw err;
 };
 
-export const receiveRemoved = (documentId: number): TypedActionType<ProjectRemovePayloadType> => {
+export const receiveRemoved = (documentId: number): TypedActionType<DocumentRemovePayloadType> => {
   success('A document was removed. You can still restore it on the trash page.');
 
   return {
@@ -157,7 +157,7 @@ export const receiveRemoved = (documentId: number): TypedActionType<ProjectRemov
   };
 };
 
-export const remove = (projectId: number, documentId: number): AsyncActionType => (dispatch): Promise<?ProjectType> => {
+export const remove = (projectId: number, documentId: number): AsyncActionType => (dispatch): Promise<?DocumentType> => {
   dispatch({
     type: types.REMOVE_DOCUMENT_REQUEST,
     payload: null

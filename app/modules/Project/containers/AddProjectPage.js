@@ -8,8 +8,8 @@ import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import AddProjectForm from '../components/AddProjectForm';
 import * as actions from '../actions/handlers';
 import documentUri from '../../Document/uri';
-import type { ProjectPayloadType } from '../project';
-import type { StateType, TypedActionType } from '../../../types/redux';
+import type { ProjectType } from '../project';
+import type { StateType } from '../../../types/redux';
 
 type LocalStateType = {
   name: string
@@ -18,7 +18,7 @@ type LocalStateType = {
 type PropsType = {
   isLoading: boolean,
   actions: {
-    save: (state: LocalStateType) => Promise<TypedActionType<ProjectPayloadType>>
+    save: (state: LocalStateType) => Promise<ProjectType>
   }
 }
 
@@ -40,7 +40,7 @@ class AddProjectPage extends Component {
   onSave = () => {
     return this.props.actions.save({
       name: this.state.name
-    }).then((project) => {
+    }).then((project: ProjectType) => {
       this.context.router.push(formatPattern(documentUri.documents, { project: project.id }));
     });
   }

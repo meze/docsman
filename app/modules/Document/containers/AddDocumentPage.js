@@ -10,8 +10,8 @@ import * as actions from '../actions/handlers';
 import * as projectActions from '../../Project/actions/handlers';
 import documentUri from '../uri';
 import type { ProjectType } from '../../Project/project';
-import type { DocumentPayloadType } from '../document';
-import type { StateType, TypedActionType } from '../../../types/redux';
+import type { DocumentType } from '../document';
+import type { StateType } from '../../../types/redux';
 
 type NewDocumentType = {
   name: string,
@@ -22,7 +22,7 @@ type NewDocumentType = {
 type PropsType = {
   isLoading: boolean,
   actions: {
-    save: (document: NewDocumentType) => Promise<TypedActionType<DocumentPayloadType>>
+    save: (document: NewDocumentType) => Promise<DocumentType>
   },
   projectActions: {
     switchTo: typeof projectActions.switchTo
@@ -49,14 +49,6 @@ class AddDocumentPage extends Component {
     content: string
   }
 
-  /*componentDidMount() {
-    console.log('project mounted to', this.props.routeParams.project);
-  }
-
-  componentWillReceiveProps(newProps: PropsType) {
-    console.log('project received to', this.props.routeParams.project);
-  }*/
-
   componentDidMount() {
     if (this.props.projectId === 0) {
       return;
@@ -81,7 +73,7 @@ class AddDocumentPage extends Component {
       name: this.state.name,
       content: this.state.content,
       projectId: this.props.routeParams.project
-    }).then((document) => {
+    }).then((document: DocumentType) => {
       this.context.router.push(formatPattern(documentUri.documents, { project: document.projectId }));
     });
   }

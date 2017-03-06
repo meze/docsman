@@ -161,7 +161,6 @@ describe('(Modules - Project) Handlers', () => {
       expect(actions[0].type).toEqual(types.UPDATE_PROJECT_REQUEST);
       expect(actions[1].type).toEqual(types.UPDATE_PROJECT);
       expect(actions[1].payload.project).toEqual({ name: 'newname', id: 1 });
-      //expect(actions[1].payload.projectId).toEqual(1);
 
       return done();
     }).catch((err) => {

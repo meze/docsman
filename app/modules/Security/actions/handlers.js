@@ -22,7 +22,7 @@ export const logout = (): ActionType => {
   return {
     type: types.LOGOUT,
     payload: null
-  }
+  };
 };
 
 export const loggedIn = (): ActionType => ({
