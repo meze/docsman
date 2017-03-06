@@ -1,6 +1,6 @@
 // @flow
 import type { TypedActionType } from '../../../types/redux';
-import type { DocumentsPayloadType, DocumentPayloadType } from '../document';
+import type { DocumentsPayloadType, DocumentPayloadType, DocumentRemovePayloadType } from '../document';
 import types from './types';
 import initialState from './state';
 
@@ -111,6 +111,23 @@ export default (state: StateType = initialState, action: TypedActionType<*>): St
         isLoading: false,
         selectedDocument: state.selectedDocument.id !== document.id ? state.selectedDocument : document
       };
+    case types.REMOVE_DOCUMENT_REQUEST: {
+      return {
+        ...state,
+        isLoading: true
+      };
+    }
+    case types.REMOVE_DOCUMENT: {
+      const payload: DocumentRemovePayloadType = action.payload;
+      const id = payload.id;
+      const itemsWithoutRemoved = state.items.filter((x) => x.id !== id);
+
+      return {
+        ...state,
+        items: itemsWithoutRemoved,
+        isLoading: false
+      };
+    }
     default:
       return state;
   }

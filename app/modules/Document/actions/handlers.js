@@ -136,3 +136,34 @@ export const update = (updatedDocument: DocumentType): AsyncActionType => (dispa
   return api.documents.save(updatedDocument.projectId, updatedDocument, updatedDocument.id)
     .then((data) => dispatch(receiveUpdated(data)));
 };
+
+const receiveRemovedError = (err: Error): AsyncActionType => (dispatch, getState): void => {
+  dispatch({
+    type: types.REMOVE_DOCUMENT_ERROR,
+    payload: null
+  });
+
+  throw err;
+};
+
+export const receiveRemoved = (documentId: number): TypedActionType<ProjectRemovePayloadType> => {
+  success('A document was removed. You can still restore it on the trash page.');
+
+  return {
+    type: types.REMOVE_DOCUMENT,
+    payload: {
+      id: documentId
+    }
+  };
+};
+
+export const remove = (projectId: number, documentId: number): AsyncActionType => (dispatch): Promise<?ProjectType> => {
+  dispatch({
+    type: types.REMOVE_DOCUMENT_REQUEST,
+    payload: null
+  });
+
+  return api.documents.remove(projectId, documentId)
+    .then((data) => dispatch(receiveRemoved(data)))
+    .catch((err) => dispatch(receiveRemovedError(err)));
+};

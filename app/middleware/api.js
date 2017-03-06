@@ -88,6 +88,13 @@ function saveDocument(projectId: number, document: DocumentType) {
     });
 }
 
+function removeDocument(projectId: number, documentId: number) {
+  return fetchJson(
+    `projects/${projectId}/documents/${documentId}`, {
+      method: 'DELETE'
+    });
+}
+
 function saveProject(project: ProjectType) {
   return fetchJson(
     'projects', {
@@ -134,7 +141,8 @@ export default {
   documents: {
     get: getDocuments,
     getOne: getDocument,
-    save: saveDocument
+    save: saveDocument,
+    remove: removeDocument
   },
   security: {
     login: login

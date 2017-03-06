@@ -62,15 +62,6 @@ class DocumentSettingsPage extends Component {
 
   props: PropsType
 
-  handleAddDocumentClick = (e: Event) => {
-    e.preventDefault();
-    this.context.router.push('/projects/' + this.props.projectId + '/createDocument');
-  }
-
-  onBackClick = () => {
-    this.context.router.push('/projects/' + this.props.projectId + '/documents');
-  }
-
   handleSubmit = (projectName: string) => {
     this.props.documentActions.update(Object.assign({}, this.props.project, {
       name: projectName
@@ -86,8 +77,8 @@ class DocumentSettingsPage extends Component {
   }
 
   onRemove = () => {
-    return this.props.documentActions.remove(this.props.project.id).then(() => {
-      this.context.router.push('/');
+    return this.props.documentActions.remove(this.props.project.id, this.props.document.id).then(() => {
+      this.context.router.push(formatPattern(documentUri.documents, { project: this.props.project.id }));
     });
   }
 

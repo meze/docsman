@@ -20,3 +20,7 @@ export type DocumentsPayloadType = {
 export type DocumentPayloadType = {
   document: DocumentType
 }
+
+export type DocumentRemovePayloadType = {
+  id: number
+}
