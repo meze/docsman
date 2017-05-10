@@ -107,7 +107,7 @@ webpackConfig.module.rules = [{
 // ------------------------------------
 // Style rules
 // ------------------------------------
-const BASE_CSS_LOADER = 'css-loader?sourceMap';
+const BASE_CSS_LOADER = 'css-loader';
 
 webpackConfig.module.rules.push({
   test: /\.less$/,

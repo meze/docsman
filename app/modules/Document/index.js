@@ -9,7 +9,7 @@ export default (store: Object) => {
   return [{
     path: uri.documents,
     getComponent(nextState: Object, cb: Function) {
-      (require: Object).ensure(['../Project'], (require) => {
+      (require: Object).ensure(['../Campaign'], (require) => {
         const Documents = require('./containers/DocumentsPage').default;
         cb(null, Documents);
       }, 'document');
@@ -17,7 +17,7 @@ export default (store: Object) => {
   }, {
     path: uri.document,
     getComponent(nextState: Object, cb: Function) {
-      (require: Object).ensure(['../Project'], (require) => {
+      (require: Object).ensure(['../Campaign'], (require) => {
         const Documents = require('./containers/DocumentPage').default;
         cb(null, Documents);
       }, 'document');
@@ -25,7 +25,7 @@ export default (store: Object) => {
   }, {
     path: uri.settings,
     getComponent(nextState: Object, cb: Function) {
-      (require: Object).ensure(['../Project'], (require) => {
+      (require: Object).ensure(['../Campaign'], (require) => {
         const Documents = require('./containers/DocumentSettingsPage').default;
         cb(null, Documents);
       }, 'document');
@@ -33,7 +33,7 @@ export default (store: Object) => {
   }, {
     path: uri.create,
     getComponent(nextState: Object, cb: Function) {
-      (require: Object).ensure(['../Project'], (require) => {
+      (require: Object).ensure(['../Campaign'], (require) => {
         const Documents = require('./containers/AddDocumentPage').default;
         cb(null, Documents);
       }, 'document');

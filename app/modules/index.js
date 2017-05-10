@@ -2,16 +2,16 @@
 import CoreLayout from '../layouts/CoreLayout/CoreLayout';
 import HomeRoute from './Home';
 import SecurityRoute from './Security';
-import ProjectRoute from './Project';
+import CampaignRoute from './Campaign';
 import DocumentRoute from './Document';
 
 export const createRoutes = (store: Object) => ({
-  path: '/projects/:project',
+  path: '/campaigns/:campaign',
   component: CoreLayout,
   childRoutes: [
     HomeRoute(),
     ...SecurityRoute(store),
-    ...ProjectRoute(store),
+    ...CampaignRoute(store),
     ...DocumentRoute(store)
   ]
 });

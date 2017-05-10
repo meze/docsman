@@ -8,10 +8,10 @@ type PropsType = {
 }
 
 const PageBreadcrumb = ({ sections, isLoading }: PropsType) => (
-  <div>
+  <section>
     <Loader size="tiny" className="breadcrumb-loader" active={isLoading} inline={true} />
-    <Breadcrumb icon="right angle" size="tiny" sections={sections} />
-  </div>
+    <Breadcrumb icon="right angle" size="mini" sections={sections} />
+  </section>
 );
 
 PageBreadcrumb.defaultProps = {

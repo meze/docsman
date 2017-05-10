@@ -8,22 +8,22 @@ import types from './types';
 // ------------------------------------
 // Actions
 // ------------------------------------
-export const request = (projectId: number): TypedActionType<DocumentsPayloadType> => ({
+export const request = (campaignId: number): TypedActionType<DocumentsPayloadType> => ({
   type: types.REQUEST_DOCUMENTS,
   payload: {
-    projectId
+    campaignId
   }
 });
 
-export const receive = (projectId: number, { documents }: { documents: DocumentType[] }): TypedActionType<DocumentsPayloadType> => ({
+export const receive = (campaignId: number, { documents }: { documents: DocumentType[] }): TypedActionType<DocumentsPayloadType> => ({
   type: types.RECEIVE_DOCUMENTS,
   payload: {
     documents,
-    projectId
+    campaignId
   }
 });
 
-export const requestOne = (projectId: number, documentId: number): ActionType => ({
+export const requestOne = (campaignId: number, documentId: number): ActionType => ({
   type: types.REQUEST_DOCUMENT,
   payload: null
 });
@@ -40,50 +40,50 @@ export const invalidate = (): ActionType => ({
   payload: null
 });
 
-const onReceiveError = (projectId: number): TypedActionType<DocumentsPayloadType> => ({
+const onReceiveError = (campaignId: number): TypedActionType<DocumentsPayloadType> => ({
   type: types.RECEIVE_DOCUMENTS_ERROR,
   payload: {
-    projectId
+    campaignId
   }
 });
 
-const doFetch = (projectId: number): AsyncActionType => (dispatch, getState): Promise<?DocumentType[]> => {
-  dispatch(request(projectId));
+const doFetch = (campaignId: number): AsyncActionType => (dispatch, getState): Promise<?DocumentType[]> => {
+  dispatch(request(campaignId));
 
-  return api.documents.get(projectId)
-    .then((data) => dispatch(receive(projectId, data)))
+  return api.documents.get(campaignId)
+    .then((data) => dispatch(receive(campaignId, data)))
     .catch(() => {
-      dispatch(onReceiveError(projectId));
+      dispatch(onReceiveError(campaignId));
     });
 };
 
-const shouldFetch = (projectId: number, { documents }: StateType): boolean => {
+const shouldFetch = (campaignId: number, { documents }: StateType): boolean => {
   if (documents.isLoading) {
     return false;
   }
 
-  if (!documents || parseInt(projectId, 10) !== parseInt(documents.projectId, 10)) {
+  if (!documents || parseInt(campaignId, 10) !== parseInt(documents.campaignId, 10)) {
     return true;
   }
 
   return documents.didInvalidate;
 };
 
-export const fetchIfNeeded = (projectId: number): AsyncActionType => (dispatch, getState): ?Promise<?DocumentType[]> => {
-  if (shouldFetch(projectId, getState())) {
-    return dispatch(doFetch(projectId));
+export const fetchIfNeeded = (campaignId: number): AsyncActionType => (dispatch, getState): ?Promise<?DocumentType[]> => {
+  if (shouldFetch(campaignId, getState())) {
+    return dispatch(doFetch(campaignId));
   }
 
   return Promise.resolve();
 };
 
-export const fetchOne = (projectId: number, documentId: number): AsyncActionType => (dispatch, getState): Promise<?DocumentType> => {
-  dispatch(requestOne(projectId, documentId));
+export const fetchOne = (campaignId: number, documentId: number): AsyncActionType => (dispatch, getState): Promise<?DocumentType> => {
+  dispatch(requestOne(campaignId, documentId));
 
-  return api.documents.getOne(projectId, documentId)
+  return api.documents.getOne(campaignId, documentId)
     .then((data: DocumentType) => dispatch(receiveOne(data)))
     .catch(() => {
-      dispatch(onReceiveError(projectId));
+      dispatch(onReceiveError(campaignId));
     });
 };
 
@@ -106,7 +106,7 @@ const newDocumentRequest: ActionType = ({
 export const save = (document: DocumentType): AsyncActionType => (dispatch, getState): Promise<?DocumentType> => {
   dispatch(newDocumentRequest);
 
-  return api.documents.save(document.projectId, document)
+  return api.documents.save(document.campaignId, document)
     .then((data) => {
       dispatch(receiveNew(data));
 
@@ -133,7 +133,7 @@ const requestUpdateDocument: ActionType = ({
 export const update = (updatedDocument: DocumentType): AsyncActionType => (dispatch, getState): Promise<?DocumentType> => {
   dispatch(requestUpdateDocument);
 
-  return api.documents.save(updatedDocument.projectId, updatedDocument, updatedDocument.id)
+  return api.documents.save(updatedDocument.campaignId, updatedDocument, updatedDocument.id)
     .then((data) => dispatch(receiveUpdated(data)));
 };
 
@@ -157,13 +157,13 @@ export const receiveRemoved = (documentId: number): TypedActionType<DocumentRemo
   };
 };
 
-export const remove = (projectId: number, documentId: number): AsyncActionType => (dispatch): Promise<?DocumentType> => {
+export const remove = (campaignId: number, documentId: number): AsyncActionType => (dispatch): Promise<?DocumentType> => {
   dispatch({
     type: types.REMOVE_DOCUMENT_REQUEST,
     payload: null
   });
 
-  return api.documents.remove(projectId, documentId)
+  return api.documents.remove(campaignId, documentId)
     .then((data) => dispatch(receiveRemoved(data)))
     .catch((err) => dispatch(receiveRemovedError(err)));
 };

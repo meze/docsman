@@ -1,7 +1,7 @@
 // @flow
 import { API_ENDPOINT } from '../config/api';
 import { error, notice } from '../utils/notification';
-import type { ProjectType } from '../modules/Project/project';
+import type { CampaignType } from '../modules/Campaign/campaign';
 import type { DocumentType } from '../modules/Document/document';
 import 'whatwg-fetch';
 
@@ -64,56 +64,56 @@ function fetchJson(url: string, options: RequestOptions = {}) {
     .catch(catchError('decoding response'));
 }
 
-function getProjects() {
-  return fetchJson('projects');
+function getCampaigns() {
+  return fetchJson('campaigns');
 }
 
-function getProject(projectId: number) {
-  return fetchJson(`projects/${projectId}`);
+function getCampaign(campaignId: number) {
+  return fetchJson(`campaigns/${campaignId}`);
 }
 
-function getDocuments(projectId: number) {
-  return fetchJson(`projects/${projectId}/documents`);
+function getDocuments(campaignId: number) {
+  return fetchJson(`campaigns/${campaignId}/documents`);
 }
 
-function getDocument(projectId: number, documentId: number) {
-  return fetchJson(`projects/${projectId}/documents/${documentId}`);
+function getDocument(campaignId: number, documentId: number) {
+  return fetchJson(`campaigns/${campaignId}/documents/${documentId}`);
 }
 
-function saveDocument(projectId: number, document: DocumentType) {
+function saveDocument(campaignId: number, document: DocumentType) {
   return fetchJson(
-    `projects/${projectId}/documents${document.id ? '/' + document.id : ''}`, {
+    `campaigns/${campaignId}/documents${document.id ? '/' + document.id : ''}`, {
       method: document.id ? 'PUT' : 'POST',
       body: JSON.stringify(document)
     });
 }
 
-function removeDocument(projectId: number, documentId: number) {
+function removeDocument(campaignId: number, documentId: number) {
   return fetchJson(
-    `projects/${projectId}/documents/${documentId}`, {
+    `campaigns/${campaignId}/documents/${documentId}`, {
       method: 'DELETE'
     });
 }
 
-function saveProject(project: ProjectType) {
+function saveCampaign(campaign: CampaignType) {
   return fetchJson(
-    'projects', {
+    'campaigns', {
       method: 'POST',
-      body: JSON.stringify(project)
+      body: JSON.stringify(campaign)
     });
 }
 
-function updateProject(id: number, project: ProjectType) {
+function updateCampaign(id: number, campaign: CampaignType) {
   return fetchJson(
-    `projects/${id}`, {
+    `campaigns/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(project)
+      body: JSON.stringify(campaign)
     });
 }
 
-function removeProject(id: number) {
+function removeCampaign(id: number) {
   return fetchJson(
-    `projects/${id}`, {
+    `campaigns/${id}`, {
       method: 'DELETE',
       body: id.toString()
     });
@@ -131,12 +131,12 @@ function login(email: string, password: string) {
 }
 
 export default {
-  projects: {
-    get: getProjects,
-    getOne: getProject,
-    save: saveProject,
-    update: updateProject,
-    remove: removeProject
+  campaigns: {
+    get: getCampaigns,
+    getOne: getCampaign,
+    save: saveCampaign,
+    update: updateCampaign,
+    remove: removeCampaign
   },
   documents: {
     get: getDocuments,

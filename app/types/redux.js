@@ -1,6 +1,6 @@
 // @flow
 import type { DocumentStateType } from '../modules/Document/actions/state';
-import type { ProjectStateType } from '../modules/Project/actions/state';
+import type { CampaignStateType } from '../modules/Campaign/actions/state';
 import type { SecurityStateType } from '../modules/Security/actions/state';
 
 export type TypedActionType<P> = {
@@ -12,7 +12,7 @@ export type TypedActionType<P> = {
 export type ActionType = TypedActionType<any>
 
 export type StateType = {
-  projects: ProjectStateType,
+  campaigns: CampaignStateType,
   documents: DocumentStateType,
   security: SecurityStateType
 }

@@ -3,7 +3,7 @@ export type DocumentType = {
   id: number,
   name: string,
   content: string,
-  projectId: number,
+  campaignId: number,
   creationDate: Date,
   isLoading: boolean
 }
@@ -14,7 +14,7 @@ export type DocumentSettingsType = {
 
 export type DocumentsPayloadType = {
   documents?: DocumentType[],
-  projectId: number
+  campaignId: number
 }
 
 export type DocumentPayloadType = {

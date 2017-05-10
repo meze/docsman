@@ -2,16 +2,15 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Container, Grid, Menu, Divider } from 'semantic-ui-react';
+import { Container, Grid, Menu, Divider, Segment, Header } from 'semantic-ui-react';
 import { formatPattern } from 'react-router';
-import ProjectsNavContainer from '../../containers/ProjectsNavContainer';
-import projectUri from '../../modules/Project/uri';
+import campaignUri from '../../modules/Campaign/uri';
 import LoginForm from '../../modules/Security/components/LoginForm';
 import type { StateType } from '../../types/redux';
 import * as securityActions from '../../modules/Security/actions/handlers';
 
 type RouteParamsType = {
-  project: number
+  campaign: number
 }
 
 type PropsType = {
@@ -39,14 +38,14 @@ class CoreLayout extends Component {
     this.props.securityActions.logout();
   }
 
-  onAddProjectClick = (e: Event) => {
+  onAddCampaignClick = (e: Event) => {
     e.preventDefault();
-    this.context.router.push(formatPattern(projectUri.create));
+    this.context.router.push(formatPattern(campaignUri.add));
   };
 
-  onProjectsClick = (e: Event) => {
+  onCampaignsClick = (e: Event) => {
     e.preventDefault();
-    this.context.router.push(formatPattern('/'));
+    this.context.router.push(formatPattern(campaignUri.list));
   };
 
   render() {
@@ -57,19 +56,15 @@ class CoreLayout extends Component {
         <Grid.Row>
           <Grid.Column width={16} className="top-nav">
             <Container>
-              <Menu size="small" inverted={true} className="head" borderless={true}>
+              <Menu inverted={true} size="small" className="head" borderless={true}>
                 <Menu.Item>
-                  <h4 className="logo">Docsman<span className="subtext">ager</span></h4>
+                  <h4 className="logo">Notify<span className="subtext">Monitor</span></h4>
                 </Menu.Item>
-                <Menu.Item name="home" active={this.context.router.location.pathname.startsWith('/projects')} onClick={this.onProjectsClick}>
-                  <span>Projects</span>
+                <Menu.Item name="home" active={this.context.router.location.pathname.startsWith('/campaigns')} onClick={this.onCampaignsClick}>
+                  <span>Campaigns</span>
                 </Menu.Item>
-                <Menu.Item name="testimonials" active={'' === 'testimonials'}>
-                  Trash
-                  {' '}
-                </Menu.Item>
-                <Menu.Item name="testimonials" active={this.context.router.isActive(projectUri.create)} className="add-project" onClick={this.onAddProjectClick}>
-                  <span>Add Project</span>
+                <Menu.Item name="testimonials" active={this.context.router.isActive(campaignUri.add)} className="add-campaign" onClick={this.onAddCampaignClick}>
+                  Add Campaign
                   {' '}
                 </Menu.Item>
                 <Menu.Item name="testimonials" onClick={this.onLogout}>
@@ -83,8 +78,8 @@ class CoreLayout extends Component {
       </Grid>
 
       <Container className="main">
-        <ProjectsNavContainer selectedProject={parseInt(routeParams.project, 10)} />
-        <Divider />
+
+
         {children}
       </Container>
     </div> : <LoginForm login={this.onLogin} />;
@@ -102,3 +97,13 @@ const mapDispatchToProp = (dispatch: Function) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProp)(CoreLayout);
+/*
+        <section className="body">
+          <Grid>
+            <Grid.Column width={16}>
+              <Segment>
+                  <CampaignsNavContainer selectedCampaign={parseInt(routeParams.campaign, 10)} />
+              </Segment>
+            </Grid.Column>
+          </Grid>
+        </section>*/

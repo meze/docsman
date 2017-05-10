@@ -16,7 +16,7 @@ type PropsType = {
   onSave: () => void
 }
 
-const ProjectSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...props }: PropsType) => {
+const CampaignSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...props }: PropsType) => {
   function handleBackClick(e: Event) {
     e.preventDefault();
     onBackClick();
@@ -47,10 +47,10 @@ const ProjectSettingsForm = ({ onSave, onBackClick, fields, isLoading, name, ...
 };
 
 const validate = ({ name }: { name: string }) => ({
-  ...notEmpty('name', name, 'A project needs a name')
+  ...notEmpty('name', name, 'A campaign needs a name')
 });
 
 export default form({
   fields: ['name'],
   validate
-})(ProjectSettingsForm);
+})(CampaignSettingsForm);

@@ -11,7 +11,7 @@ type PropsType = {
   onRemove: () => void
 }
 
-export default class DeleteProjectForm extends Component {
+export default class DeleteCampaignForm extends Component {
   state: StateType = {
     disableButton: true
   }
@@ -35,10 +35,10 @@ export default class DeleteProjectForm extends Component {
     return (
       <Segment loading={isLoading}>
         <Message negative={true}>
-          <Header content="Move this project to trash" dividing={true} />
+          <Header content="Move this campaign to trash" dividing={true} />
           <br />
           <Form className="fluid" onSubmit={this.handleRemove}>
-            <Form.Checkbox name="confirmed" onChange={this.toggleButton} inline={true} label="Yes, I want to move this project and all its documents to trash" />
+            <Form.Checkbox name="confirmed" onChange={this.toggleButton} inline={true} label="Yes, I want to move this campaign and all its documents to trash" />
             <Button color="red" size="small" type="submit" disabled={this.state.disableButton}>Trash</Button>
           </Form>
         </Message>

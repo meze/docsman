@@ -33,7 +33,7 @@ export default (state: StateType = initialState, action: TypedActionType<*>): St
         isLoading: false,
         didInvalidate: false,
         items: payload.documents,
-        projectId: payload.projectId
+        campaignId: payload.campaignId
       };
     }
     case types.RECEIVE_DOCUMENTS_ERROR: {
@@ -42,7 +42,7 @@ export default (state: StateType = initialState, action: TypedActionType<*>): St
       return {
         ...state,
         items: [],
-        projectId: payload.projectId,
+        campaignId: payload.campaignId,
         isLoading: false
       };
     }

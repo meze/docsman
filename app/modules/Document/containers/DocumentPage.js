@@ -3,23 +3,23 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link, formatPattern } from 'react-router';
-import { Header, Segment, Button, Divider, Grid } from 'semantic-ui-react';
-import PageBreadcrumb from '../../../components/PageBreadcrumb';
+import { Header, Segment, Button, Grid, Menu } from 'semantic-ui-react';
 import ContentEditor from '../../../components/ContentEditor';
 import * as documentActions from '../actions/handlers';
-import * as projectActions from '../../Project/actions/handlers';
+import * as campaignActions from '../../Campaign/actions/handlers';
 import documentUri from '../uri';
+import campaignUri from '../../Campaign/uri';
 import type { DocumentType } from '../document';
-import type { ProjectType } from '../../Project/project';
+import type { CampaignType } from '../../Campaign/campaign';
 import type { StateType } from '../../../types/redux';
 
 type PropsType = {
-  projectActions: Object,
+  campaignActions: Object,
   documentActions: Object,
-  projectId: number,
+  campaignId: number,
   documentId: number,
   isLoading: boolean,
-  project: ProjectType,
+  campaign: CampaignType,
   document: DocumentType,
   routeParams: Object
 }
@@ -30,16 +30,16 @@ class DocumentPage extends Component {
   }
 
   componentDidMount() {
-    if (this.props.projectId > 0 && this.props.documentId > 0) {
-      this.props.documentActions.fetchOne(this.props.projectId, this.props.documentId);
-      this.props.projectActions.switchTo(this.props.projectId);
+    if (this.props.campaignId > 0 && this.props.documentId > 0) {
+      this.props.documentActions.fetchOne(this.props.campaignId, this.props.documentId);
+      this.props.campaignActions.switchTo(this.props.campaignId);
     }
   }
 
   componentWillReceiveProps(props: PropsType) {
-    if (props.projectId !== this.props.projectId || props.documentId !== this.props.documentId) {
-      this.props.documentActions.fetchOne(props.projectId, props.documentId);
-      this.props.projectActions.switchTo(props.projectId);
+    if (props.campaignId !== this.props.campaignId || props.documentId !== this.props.documentId) {
+      this.props.documentActions.fetchOne(props.campaignId, props.documentId);
+      this.props.campaignActions.switchTo(props.campaignId);
     }
   }
 
@@ -48,42 +48,52 @@ class DocumentPage extends Component {
   save = (content: ?string) => {
     this.props.documentActions.update({
       id: this.props.documentId,
-      projectId: this.props.projectId,
+      campaignId: this.props.campaignId,
       content,
       name: this.props.document.name
     });
   }
 
   handleSettingsClick = () => {
-    this.context.router.push(formatPattern(documentUri.settings, { project: this.props.projectId, document: this.props.documentId }));
+    this.context.router.push(formatPattern(documentUri.settings, { campaign: this.props.campaignId, document: this.props.documentId }));
   }
 
   render() {
-    const { project, document, isLoading } = this.props;
+    const { campaign, document, isLoading } = this.props;
 
     const sections = [
-      { content: <Link to={formatPattern(documentUri.documents, { project: project.id })}>{project.name}</Link>, key: 1 },
-      { content: document.name, active: true, key: 2 }
+      { content: <Link to={formatPattern(campaignUri.list)}>Campaigns</Link>, key: 1 },
+      { content: <Link to={formatPattern(documentUri.documents, { campaign: campaign.id })}>{campaign.name}</Link>, key: 2 },
+      // { content: document.name, active: true, key: 3 }
     ];
 
     return (
       <section className="body">
-        <PageBreadcrumb sections={sections} isLoading={!!(project.isLoading || document.isLoading)} />
         <Grid>
           <Grid.Column width={16}>
-            <Segment loading={isLoading}>
-              <Header floated="left">
-                {document.name}
-              </Header>
-              <Button
-                icon="setting"
-                onClick={this.handleSettingsClick}
-                floated="right"
-                compact={true}
-                color="grey"
-                size="small"
-              />
-              <Divider clearing={true} />
+            <Header attached={true}>
+              {document.name}
+            </Header>
+
+            <Menu size="tiny" className="head" attached={true} secondary={true} pointing={true}>
+              <Menu.Item name="document" active={true}>
+                Document
+              </Menu.Item>
+              <Menu.Item name="campaign">
+                <Link to={formatPattern(documentUri.documents, { campaign: campaign.id })}>{campaign.name}</Link>
+              </Menu.Item>
+
+              <Menu.Menu position="right">
+                <Menu.Item name="settings" onClick={this.handleSettingsClick}>
+                  <Button
+                    icon="setting"
+                    floated="right"
+                  />
+                </Menu.Item>
+              </Menu.Menu>
+            </Menu>
+
+            <Segment loading={isLoading} attached={true}>
               <ContentEditor text={document.content} onSave={this.save} />
             </Segment>
           </Grid.Column>
@@ -94,21 +104,21 @@ class DocumentPage extends Component {
 }
 
 const mapStateToProps = (state: StateType, ownProps: PropsType) => {
-  const { projects, documents } = state;
+  const { campaigns, documents } = state;
 
   return {
     isLoading: documents.isLoading,
     document: documents.selectedDocument,
     documentId: parseInt(ownProps.routeParams.document, 10),
-    projectId: parseInt(ownProps.routeParams.project, 10),
-    project: projects.currentProject
+    campaignId: parseInt(ownProps.routeParams.campaign, 10),
+    campaign: campaigns.currentCampaign
   };
 };
 
 const mapDispatchToProp = (dispatch: Function) => {
   return {
     documentActions: bindActionCreators(documentActions, dispatch),
-    projectActions: bindActionCreators(projectActions, dispatch)
+    campaignActions: bindActionCreators(campaignActions, dispatch)
   };
 };
 

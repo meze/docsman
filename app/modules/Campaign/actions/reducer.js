@@ -1,6 +1,6 @@
 // @flow
 import type { TypedActionType } from '../../../types/redux';
-import type { ProjectsPayloadType, ProjectPayloadType, ProjectRemovePayloadType } from '../project';
+import type { CampaignsPayloadType, CampaignPayloadType, CampaignRemovePayloadType } from '../campaign';
 import types from './types';
 import initialState from './state';
 
@@ -13,82 +13,82 @@ import initialState from './state';
 type StateType = typeof initialState
 export default (state: StateType = initialState, action: TypedActionType<*>): StateType => {
   switch (action.type) {
-    case types.INVALIDATE_PROJECTS:
+    case types.INVALIDATE_CAMPAIGNS:
       return {
         ...state,
         didInvalidate: true
       };
-    case types.REQUEST_PROJECTS:
+    case types.REQUEST_CAMPAIGNS:
       return {
         ...state,
         isLoading: true,
         didInvalidate: false
       };
-    case types.RECEIVE_PROJECTS: {
-      const payload: ProjectsPayloadType = action.payload;
+    case types.RECEIVE_CAMPAIGNS: {
+      const payload: CampaignsPayloadType = action.payload;
 
       return {
         ...state,
         isLoading: false,
         didInvalidate: false,
-        items: payload.projects
+        items: payload.campaigns
       };
     }
-    case types.RECEIVE_PROJECTS_ERROR:
+    case types.RECEIVE_CAMPAIGNS_ERROR:
       return {
         ...state,
         isLoading: false
       };
-    case types.UPDATE_PROJECT_REQUEST:
+    case types.UPDATE_CAMPAIGN_REQUEST:
       return {
         ...state,
         isLoading: true
       };
-    case types.UPDATE_PROJECT_ERROR:
+    case types.UPDATE_CAMPAIGN_ERROR:
       return {
         ...state,
         isLoading: false
       };
-    case types.UPDATE_PROJECT: {
-      const payload: ProjectPayloadType = action.payload;
-      const project = payload.project;
-      if (!project) {
+    case types.UPDATE_CAMPAIGN: {
+      const payload: CampaignPayloadType = action.payload;
+      const campaign = payload.campaign;
+      if (!campaign) {
         return state;
       }
 
       const items = Array.from(state.items);
-      const key = items.findIndex((x) => x && x.id === project.id);
+      const key = items.findIndex((x) => x && x.id === campaign.id);
       if (key >= 0) {
-        items[key] = project;
+        items[key] = campaign;
       }
 
       return {
         ...state,
         items,
         isLoading: false,
-        currentProject: state.currentProject && state.currentProject.id === project.id ? project : state.currentProject
+        currentCampaign: state.currentCampaign && state.currentCampaign.id === campaign.id ? campaign : state.currentCampaign
       };
     }
-    case types.NEW_PROJECT_REQUEST:
+    case types.NEW_CAMPAIGN_REQUEST:
       return {
         ...state,
         isLoading: true
       };
-    case types.NEW_PROJECT: {
-      const payload: ProjectPayloadType = action.payload;
-      const project = payload.project;
+    case types.NEW_CAMPAIGN: {
+      const payload: CampaignPayloadType = action.payload;
+      const campaign = payload.campaign;
 
       return {
         ...state,
         isLoading: false,
         items: [
-          project,
+          campaign,
           ...state.items
         ]
       };
     }
-    case types.REMOVE_PROJECT: {
-      const payload: ProjectRemovePayloadType = action.payload;
+    case types.REMOVE_CAMPAIGN: {
+      const payload: CampaignRemovePayloadType = action.payload;
       const id = payload.id;
       const itemsWithoutRemoved = state.items.filter((x) => x.id !== id);
 
@@ -97,21 +97,21 @@ export default (state: StateType = initialState, action: TypedActionType<*>): St
         items: itemsWithoutRemoved
       };
     }
-    case types.SWITCH_PROJECT_REQUEST:
+    case types.SWITCH_CAMPAIGN_REQUEST:
       return {
         ...state,
-        currentProject: initialState.currentProject
+        currentCampaign: initialState.currentCampaign
       };
-    case types.SWITCH_PROJECT: {
-      const payload: ProjectPayloadType = action.payload;
-      const project = payload.project;
+    case types.SWITCH_CAMPAIGN: {
+      const payload: CampaignPayloadType = action.payload;
+      const campaign = payload.campaign;
 
       return {
         ...state,
-        currentProject: project
+        currentCampaign: campaign
       };
     }
-    case types.SWITCH_PROJECT_ERROR:
+    case types.SWITCH_CAMPAIGN_ERROR:
       return state;
     default:
       return state;

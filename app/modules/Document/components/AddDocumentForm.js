@@ -31,7 +31,7 @@ const AddDocumentForm = ({ fields: { name, content }, isLoading, onSave, onCance
   }
 
   return (
-    <Segment>
+    <section>
       {isLoading ? <div className="ui active inverted dimmer">
         <Loader inverted={true}>Loading</Loader>
       </div> : ''}
@@ -45,7 +45,7 @@ const AddDocumentForm = ({ fields: { name, content }, isLoading, onSave, onCance
         <Button type="submit" primary={true} disabled={!props.form.isValid()}>Submit</Button>
         <Button type="button" onClick={handleCancel}>Cancel</Button>
       </Form>
-    </Segment>
+    </section>
   );
 };
 

@@ -1,15 +1,15 @@
 // @flow
 import React, { Component } from 'react';
-import { Table, Button, Header, Segment, Divider } from 'semantic-ui-react';
+import { Table, Button, Divider } from 'semantic-ui-react';
 import { Link, formatPattern } from 'react-router';
 import Timeago from '../../../components/Timeago';
 import documentUri from '../uri';
 import type { DocumentType } from '../document';
-import type { ProjectType } from '../../Project/project';
+import type { CampaignType } from '../../Campaign/campaign';
 
 type TableFullWidthPropsType = {
   items: DocumentType[],
-  projectId: number,
+  campaignId: number,
   lastId: number
 }
 
@@ -29,7 +29,7 @@ const TableFullWidth = (props: TableFullWidthPropsType) => {
     return (
       <Table.Row key={item.id} warning={isLast}>
         <Table.Cell>
-          <Link to={formatPattern(documentUri.document, { project: props.projectId, document: item.id })}>{item.name}</Link>
+          <Link to={formatPattern(documentUri.document, { campaign: props.campaignId, document: item.id })}>{item.name}</Link>
         </Table.Cell>
         <Table.Cell><Timeago time={item.creationDate} /></Table.Cell>
       </Table.Row>
@@ -56,7 +56,7 @@ const TableFullWidth = (props: TableFullWidthPropsType) => {
 
 type DocumentListPropsType = {
   items: DocumentType[],
-  project: ProjectType,
+  campaign: CampaignType,
   handleSettingsClick: (e: Event) => void,
   handleAddDocumentClick: (e: Event) => void,
   isLoading: boolean,
@@ -72,31 +72,7 @@ export default class DocumentList extends Component {
 
   render() {
     return (
-      <section>
-        <Segment loading={this.props.isLoading}>
-          <Header floated="left">Documents</Header>
-          <span className="sticker">
-            <Button
-              icon="setting"
-              floated="right"
-              compact={true}
-              color="grey"
-              size="small"
-              onClick={this.handleSettingsClick}
-            />
-            <Button
-              floated="right"
-              compact={true}
-              primary={true}
-              size="small"
-              onClick={this.props.handleAddDocumentClick}
-              content="Add"
-            />
-          </span>
-          <Divider clearing={true} />
-          <TableFullWidth lastId={this.props.lastId} items={this.props.items} projectId={this.props.project.id} />
-        </Segment>
-      </section>
+      <TableFullWidth lastId={this.props.lastId} items={this.props.items} campaignId={this.props.campaign.id} />
     );
   }
 }

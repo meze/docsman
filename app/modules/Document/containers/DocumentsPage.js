@@ -3,15 +3,15 @@ import React, { Component, PropTypes as T } from 'react';
 import { formatPattern } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Segment, Menu, Header, Button } from 'semantic-ui-react';
 import PageBreadcrumb from '../../../components/PageBreadcrumb';
 import DocumentList from '../components/DocumentList';
 import * as documentActions from '../actions/handlers';
-import * as projectActions from '../../Project/actions/handlers';
-import projectUri from '../../Project/uri';
+import * as campaignActions from '../../Campaign/actions/handlers';
+import campaignUri from '../../Campaign/uri';
 import documentUri from '../uri';
 import type { DocumentType } from '../document';
-import type { ProjectType } from '../../Project/project';
+import type { CampaignType } from '../../Campaign/campaign';
 import type { StateType } from '../../../types/redux';
 
 type PropsType = {
@@ -19,10 +19,10 @@ type PropsType = {
   documentId: number,
   isLoading: boolean,
   documentActions: Object,
-  projectActions: Object,
-  project: ProjectType,
+  campaignActions: Object,
+  campaign: CampaignType,
   routeParams: Object,
-  selectedProject: number,
+  selectedCampaign: number,
   items: DocumentType[]
 }
 
@@ -32,15 +32,15 @@ class DocumentsPage extends Component {
   }
 
   componentDidMount() {
-    this.props.documentActions.fetchIfNeeded(this.props.selectedProject);
-    this.props.projectActions.switchTo(this.props.selectedProject);
+    this.props.documentActions.fetchIfNeeded(this.props.selectedCampaign);
+    this.props.campaignActions.switchTo(this.props.selectedCampaign);
   }
 
   componentWillReceiveProps(props: PropsType) {
-    if (props.selectedProject !== this.props.selectedProject) {
+    if (props.selectedCampaign !== this.props.selectedCampaign) {
       this.props.documentActions.invalidate();
-      this.props.documentActions.fetchIfNeeded(props.selectedProject);
-      this.props.projectActions.switchTo(props.selectedProject);
+      this.props.documentActions.fetchIfNeeded(props.selectedCampaign);
+      this.props.campaignActions.switchTo(props.selectedCampaign);
     }
   }
 
@@ -48,33 +48,54 @@ class DocumentsPage extends Component {
 
   handleAddDocumentClick = (e: Event) => {
     e.preventDefault();
-    this.context.router.push(formatPattern(documentUri.create, { project: this.props.selectedProject }));
+    this.context.router.push(formatPattern(documentUri.create, { campaign: this.props.selectedCampaign }));
   }
 
   handleSettingsClick = (e: Event) => {
     e.preventDefault();
-    this.context.router.push(formatPattern(projectUri.settings, { project: this.props.selectedProject }));
+    this.context.router.push(formatPattern(campaignUri.settings, { campaign: this.props.selectedCampaign }));
   }
 
   render() {
-    const { items, isLoading, project, lastId } = this.props;
+    const { items, isLoading, campaign, lastId } = this.props;
     const sections = [
-      { content: project.name, active: true, key: 1 }
+      { content: campaign.name, active: true, key: 1 }
     ];
 
     return (
       <section className="body">
-        <PageBreadcrumb sections={sections} isLoading={!!project.isLoading} />
         <Grid>
           <Grid.Column width={16}>
-            <DocumentList
-              items={items}
-              isLoading={isLoading}
-              handleAddDocumentClick={this.handleAddDocumentClick}
-              handleSettingsClick={this.handleSettingsClick}
-              project={project}
-              lastId={lastId}
-            />
+            <Header attached={true}>
+              {campaign.name}
+            </Header>
+
+            <Menu size="tiny" className="head" attached={true} secondary={true} pointing={true}>
+              <Menu.Item name="document" active={true}>
+                Documents
+              </Menu.Item>
+              <Menu.Menu position="right">
+                <Menu.Item name="settings" fitted={true} onClick={this.handleAddDocumentClick}>
+                  <i className="ui icon blue plus"></i> Add
+                </Menu.Item>
+                <Menu.Item name="settings" position="right" fitted={true} onClick={this.handleSettingsClick}>
+                  <Button
+                    icon="setting"
+                  />
+                </Menu.Item>
+              </Menu.Menu>
+            </Menu>
+            <Segment loading={this.props.isLoading} attached={true}>
+              <PageBreadcrumb sections={sections} isLoading={!!campaign.isLoading} />
+              <DocumentList
+                items={items}
+                isLoading={isLoading}
+                handleAddDocumentClick={this.handleAddDocumentClick}
+                handleSettingsClick={this.handleSettingsClick}
+                campaign={campaign}
+                lastId={lastId}
+              />
+            </Segment>
           </Grid.Column>
         </Grid>
       </section>
@@ -83,7 +104,7 @@ class DocumentsPage extends Component {
 }
 
 const mapStateToProps = (state: StateType, ownProps: PropsType) => {
-  const { documents, projects } = state;
+  const { documents, campaigns } = state;
   const {
     isLoading,
     items,
@@ -95,10 +116,10 @@ const mapStateToProps = (state: StateType, ownProps: PropsType) => {
   };
 
   return {
-    project: projects.currentProject,
+    campaign: campaigns.currentCampaign,
     items,
     isLoading,
-    selectedProject: ownProps.routeParams.project,
+    selectedCampaign: ownProps.routeParams.campaign,
     lastId: lastItemId
   };
 };
@@ -106,7 +127,7 @@ const mapStateToProps = (state: StateType, ownProps: PropsType) => {
 const mapDispatchToProp = (dispatch: Function) => {
   return {
     documentActions: bindActionCreators(documentActions, dispatch),
-    projectActions: bindActionCreators(projectActions, dispatch)
+    campaignActions: bindActionCreators(campaignActions, dispatch)
   };
 };
 
